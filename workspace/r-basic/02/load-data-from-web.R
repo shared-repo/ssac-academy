@@ -65,11 +65,7 @@ bplot <- barplot(as.numeric(df$MEAN_PRE),
                  col = rainbow(10),
                  ylim = c(0, 2000),
                  names.arg = df$NAM,
-                 cex.name = 0.6, las = 2)
+                 cex.name = 0.7, las = 2)
 text(x = bplot, y = df$MEAN_PRE - 300, 
      labels = paste(df$MEAN_PRE, 'mm'),
-     col = 'black', cex = 0.6, srt = 90)
-
-df$NAM
-
-?par
+     col = 'black', cex = 0.7, srt = 90)
