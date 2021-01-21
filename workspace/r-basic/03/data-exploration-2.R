@@ -135,6 +135,13 @@ group_all
 #####################################################################
 ## 연습
 
+?mpg
+
+low_mpg <- mpg %>% filter(displ <= 4)
+high_mpg <- mpg %>% filter(displ > 4)
+mean(low_mpg$hwy)
+mean(high_mpg$hwy)
+
 mpg %>%
   mutate(displ_level = ifelse(displ <= 4, 'low', 'high')) %>% 
   group_by(displ_level) %>% 
@@ -151,7 +158,7 @@ mpg %>%
 
 mpg %>% 
   select(class, cty, hwy) %>% 
-  head
+  head(10)
 
 mpg %>%
   filter(class %in% c('suv', 'compact')) %>% 
@@ -191,8 +198,60 @@ fuel <- data.frame(fl = c('c', 'd', 'e', 'p', 'r'),
                    price_fl = c(2.35, 2.38, 2.11, 2.76, 2.22),
                    stringsAsFactors = FALSE)
 fuel
+mpg
+
+?left_join
 
 mpg %>% 
   inner_join(fuel, by = 'fl') %>% 
   select(model, fl, price_fl) %>% 
   head
+
+##############################################
+
+df <- data.frame(sex = c("M", "F", NA, "M", "F"),
+                 score = c(5, 4, 3, 4, NA))
+df
+
+is.na(df)
+
+table(is.na(df))
+table(is.na(df$sex))
+table(is.na(df$score))
+
+df_nomiss <- df %>% filter(!is.na(score) & !is.na(sex))
+df_nomiss
+
+df_nomiss2 <- na.omit(df)
+df_nomiss2
+
+
+exam <- read.csv("data-files/csv_exam.csv")
+exam
+exam[c(3, 8, 15), "math"] <- NA
+exam
+
+exam %>%
+  summarise(mean_math = mean(math))
+
+exam %>%
+  summarise(mean_math = mean(math, na.rm=T))
+
+math_mean <- mean(exam$math, na.rm=T)
+exam$math <- ifelse(is.na(exam$math), math_mean, exam$math)
+table(is.na(exam$math))
+
+
+this_mpg <- as.data.frame(ggplot2::mpg)
+this_mpg
+this_mpg[c(65, 124, 131, 153, 212), "hwy"] <- NA
+
+table(is.na(this_mpg$drv))
+table(is.na(this_mpg$hwy))
+
+this_mpg %>% 
+  filter(!is.na(hwy)) %>% 
+  group_by(drv) %>% 
+  summarise(hwy_mean = mean(hwy))
+
+
