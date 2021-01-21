@@ -81,3 +81,53 @@ hflights_df %>%
   filter(arr > 30 | dep > 30)
 
 hflights_df
+
+##############################
+
+# install.packages("tidyr")
+# install.packages("devtools")
+# library(devtools)
+# install_github("garrettgman/DSR")
+
+library(tidyr)
+library(DSR)
+
+table1
+table2
+table3
+table4
+table5
+table6
+
+#
+table2
+tidy <- spread(table2, key, value)
+tidy
+
+#
+table4
+gathered_messy <- gather(table4, year, case, 2:3)
+gathered_messy
+
+#
+table3
+seperated_messy <- separate(table3,
+                            rate,
+                            into = c("cases", "population"),
+                            sep = "/")
+seperated_messy
+
+seperated_messy2 <- separate(table3,
+                             year,
+                             into = c("century", "year"),
+                             sep = 2)
+seperated_messy2
+
+#
+table6
+united <- unite(table6,
+                year,
+                century,
+                year,
+                sep = "")
+united
