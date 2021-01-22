@@ -1,0 +1,110 @@
+---
+title: "LAB TWO"
+output: html_notebook
+---
+
+### 라이브러리 준비
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(scales)
+```
+
+### 데이터 준비
+
+```{r}
+dau <- read.csv('../data-files/lab2-dau.csv')
+user_info <- read.csv('../data-files/lab2-user_info.csv')
+```
+
+### 데이터 확인
+
+```{r}
+str(dau)
+str(user_info)
+```
+### 데이터 병합
+
+```{r}
+dau_user_info <- dau %>% 
+  left_join(user_info, by = c('user_id', 'app_name'))
+
+dau_user_info
+```
+
+
+### 월 컬럼 추가 (log_date를 사용해서 0000-00-00 -> 0000-00)
+
+```{r}
+dau_user_info <- dau_user_info %>% 
+  mutate(log_month = substr(log_date, 1, 7))
+
+dau_user_info
+```
+
+### 월별 / 성별 사용자 수
+
+```{r}
+table(dau_user_info[, c('log_month', 'gender')])
+```
+
+### 월별 / 연령대별 사용자 수
+
+```{r}
+table(dau_user_info[, c('log_month', 'generation')])
+```
+
+
+### 월별 / 장비종류별 사용자 수
+
+```{r}
+table(dau_user_info[, c('log_month', 'device_type')])
+```
+
+
+### 날짜별 / 장비종류별 사용자 수
+
+```{r}
+dau_user_info <- dau_user_info %>% 
+  group_by(log_date, device_type) %>% 
+  summarise(dau = length(user_id)) %>% 
+  mutate(log_date = as.Date(log_date))
+
+dau_user_info
+```
+
+
+
+### 일자별/장비종류별 집계 결과 시각화
+
+```{r}
+ggplot(dau_user_info, 
+       aes(x = log_date, y = dau, col = device_type, lty = device_type, shape = device_type)) + 
+  geom_line(lwd = 1) +
+  geom_point(size = 3)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
