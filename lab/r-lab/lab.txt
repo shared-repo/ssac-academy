@@ -17,7 +17,6 @@
   payment 변수 NA -> 0
 
 # 월별로 집계하기
-
 ## 월 항목 추가
    log_month 변수 추가 : log_date 변수의 값 0000-00-00 을 0000-00 으로 변경해서 사용 (힌트 : substr 함수 등 문자열 분해 함수 사용)
    install_month 변수 추가 : install_date 변수의 값 0000-00-00 을 0000-00 으로 변경해서 사용 (힌트 : substr 함수 등 문자열 분해 함수 사용)
@@ -31,6 +30,8 @@
 # 신규 유저인지 기존 유저인지 구분하는 항목을 추가
 ## 신규 유저와 기존 유저 식별
    위 집계 결과 만들어진 mau_payment 데이터프레임에 user_type 변수(컬럼) 추가 : install_month == log_month 이면 'install' 아니면 'existing'
+   
+## 신규 유저와 기존 유저 별로 payment 합계 계산   
    log_month와 user_type 변수로 group_by -> summarise 함수로 payment 합계를 계산해서 total_payment 변수에 저장
 
 # 그패프로 데이터를 시각화하기 
@@ -67,3 +68,33 @@ log_month 변수 추가 : log_date 변수의 값 0000-00-00 을 0000-00 으로 �
 ## 날짜별로 단말기별 유저수 산출
 ## 날짜 데이터를 문자열에서 날짜 데이터 형식으로 변환 ( log_date변수에 as.Date 함수 적용 )
 ## 시계열의 트렌드 그래프 그리기 : ggplot + geom_line + geom_point
+
+
+[ 분석 시나리오 3 ]
+
+1. 가상의 게임 회사
+2. 아이템 할인 이벤트를 실행하고 있으나 이벤트의 영향으로 발생하는 구매율 증가는 평균보다 낮은 문제 
+3. 화면 디자인 담당자 변경으로 이벤트 배너 광고 표시 내용에 문제가 있는 것으로 추정
+4. A/B 테스트를 통해 화면 디자인 담당자에 따라 구매율 차이가 발생하는지 확인하는 분석 실행 
+
+# ab.test.imp 데이터에 ab.test.goal 데이터를 결합시키기
+
+# CSV 파일 읽기
+lab3-ab_test_imp.csv -> ab.test.imp
+lab3-ab_test_goal.csv -> ab.test.goal
+
+# ab.test.imp에 ab.test.goal를 결합 (기준 컬럼 : transaction_id)
+
+# 클릭 플래그 추가
+  ab.test.imp 데이터 프레임에 is_goal 변수 추가 ( 병합된 user_id 컬럼이 na 이면 0, 아니면 1 )
+
+# 클릭율을 계산하기
+  test_case 컬럼을 기준으로 sum(is_goal) / length(user_id)를 집계해서 cvr 변수에 저장
+  
+# χ2 검정을 실행하기
+
+# 날짜별, 테스트 케이스별로 클릭율을 산출하기
+
+# 테스트 케이스별로 클릭율을 산출하기
+
+# 테스트 케이스별 클릭율의 시계열추이 그래프
