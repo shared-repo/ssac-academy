@@ -1,0 +1,51 @@
+---
+title: "Data Exploration 4"
+output: html_notebook
+---
+
+<br />
+
+### 라이브러리 준비
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+<br />
+
+### 데이터 준비
+```{r}
+raw_welfare <- read.csv('../data-files/selected_welfare.csv')
+f <- file('../data-files/job_code.csv', encoding = "UTF-8") # 파일 encoding을 지정하기 위해 별도의 파일 변수 생성
+raw_job_code <- read.csv(f)
+
+welfare <- raw_welfare
+job_code <- raw_job_code
+```
+
+<br />
+
+### 데이터 확인
+```{r}
+welfare
+job_code
+```
+
+<br />
+
+### 데이터프레임 결합(병합)
+
+```{r}
+welfare <- welfare %>% 
+  left_join(job_code, by='code_job')
+
+welfare
+
+welfare %>% 
+  filter(!is.na(code_job)) %>% 
+  head(10)
+  
+```
+
+

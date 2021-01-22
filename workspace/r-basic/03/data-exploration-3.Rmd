@@ -1,22 +1,32 @@
 ---
 title: "Data Exploration"
-output: html_notebook
+output:
+  word_document: default
+  html_document: default
 ---
+
+<br />
+
+### 라이브러리 준비  
 
 ```{r}
 library(ggplot2)
 library(dplyr)
 ```
 
+<br />
+
+### 데이터 가져오기
 
 ```{r}
-## 데이터 가져오기
 raw_welfare <- read.csv('../data-files/selected_welfare.csv')
 ```
 
+<br />
+
+### 데이터 복사
 
 ```{r}
-## 데이터 복사
 welfare <- raw_welfare
 ```
 
