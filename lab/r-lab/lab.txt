@@ -1,0 +1,69 @@
+[ 분석 시나리오 1]
+
+1. 가상의 게임 회사 
+2. 지난 달에 비해 이번 달 매출 감소
+3. 이번 달에 광고비 지출 감소
+4. 광고비 지출 감소가 매출 감소 원인인지 확인하는 분석 실행
+
+# CSV 파일 읽기 
+  lab1-dau.csv -> dau ( daily active user : 하루에 한 번 이상 게임에 접속한 사용자 데이터 )
+  lab1-dpu.csv -> dpu ( daily payment user : 사용자별 구매 이력 데이터)
+  lab1-install.csv -> install ( 사용자별 게임 시작 일자 )
+
+# DAU 데이터에 Install 데이터를 결합하기 (기준 컬럼 : user_id, app_name )
+# 위 데이터에 다시 DPU 데이터를 결합하기 (기준 컬럼 : log_date, user_id, app_name )
+
+# 비과금 유저의 과금액에 0을 넣기
+  payment 변수 NA -> 0
+
+# 월별로 집계하기
+
+## 월 항목 추가
+   log_month 변수 추가 : log_date 변수의 값 0000-00-00 을 0000-00 으로 변경해서 사용 (힌트 : substr 함수 등 문자열 분해 함수 사용)
+   install_month 변수 추가 : install_date 변수의 값 0000-00-00 을 0000-00 으로 변경해서 사용 (힌트 : substr 함수 등 문자열 분해 함수 사용)
+
+## 결재 금액 집계
+   log_month, user_id, install_month 기준으로 group_by
+   payment의 합계 데이터 도출 -> payment 변수에 저장
+   집계결과 데이터프레임은 mau_payment 변수에 저장
+
+
+# 신규 유저인지 기존 유저인지 구분하는 항목을 추가
+## 신규 유저와 기존 유저 식별
+   위 집계 결과 만들어진 mau_payment 데이터프레임에 user_type 변수(컬럼) 추가 : install_month == log_month 이면 'install' 아니면 'existing'
+   log_month와 user_type 변수로 group_by -> summarise 함수로 payment 합계를 계산해서 total_payment 변수에 저장
+
+# 그패프로 데이터를 시각화하기 
+  geom_bar(stat='identity') 사용해서 시각화
+  사용자구분(user_type)는 색상으로 구분해서 표현
+
+
+[ 분석 시나리오 2]
+
+1. 가상의 게임 회사
+2. 이번 달 사용자 수 급격히 감소
+3. 광고, 이벤트 등에서 특별한 변경은 없었음
+4. 사용자를 연령별, 성별 그룹으로 나누고 어떤 그룹에서 감소했는지 파악하는 데이터 분석 실행
+
+# CSV 파일을 읽어들이기
+  lab2-dau.csv -> dau
+  lab2-user_info.csv -> user_info
+
+# dau에 user_info를 결합 ( 기준 컬럼 : user_id, app_name )
+
+# 월 항목을 추가
+log_month 변수 추가 : log_date 변수의 값 0000-00-00 을 0000-00 으로 변경해서 사용 (힌트 : substr 함수 등 문자열 분해 함수 사용)
+
+# 세그먼트 분석（성별로 집계）
+  log_month별 gender 수 집계
+
+# 세그먼트 분석(연령대별로 집계）
+  log_month별 generation 수 집계
+
+# 세그먼트 분석（단말기별로 집계）
+  log_month별 device_type 수 집계
+
+# 세그먼트 분석 결과를 시각화
+## 날짜별로 단말기별 유저수 산출
+## 날짜 데이터를 문자열에서 날짜 데이터 형식으로 변환 ( log_date변수에 as.Date 함수 적용 )
+## 시계열의 트렌드 그래프 그리기 : ggplot + geom_line + geom_point

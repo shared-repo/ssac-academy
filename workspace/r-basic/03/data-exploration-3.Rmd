@@ -3,6 +3,11 @@ title: "Data Exploration"
 output: html_notebook
 ---
 
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
 
 ```{r}
 ## 데이터 가져오기
@@ -177,9 +182,68 @@ table(welfare$religion)
 ```
 
 ```{r}
+# 종교와 결혼상태를 기준으로 빈도, 빈도비율 계산
+religion_marriage <- welfare %>% 
+  filter(!is.na(marriage2)) %>% 
+  group_by(religion, marriage2) %>% 
+  summarise(n = n()) %>% 
+  mutate(total = sum(n)) %>%
+  mutate(pct = round(n / total * 100, 1))
+  
 ```
 
 
 ```{r}
+religion_marriage
 ```
+```{r}
+# 이혼에 해당하는 데이터만 뽑기
+divorce <- religion_marriage %>% 
+  filter(marriage2 == 'divorce') %>% 
+  select(religion, pct)
+
+divorce
+
+```
+
+```{r}
+ggplot(divorce, aes(x = religion, y = pct)) + geom_bar(stat="identity")
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
