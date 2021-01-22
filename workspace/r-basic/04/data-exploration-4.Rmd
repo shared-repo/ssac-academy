@@ -48,4 +48,42 @@ welfare %>%
   
 ```
 
+### 직업별 급여 데이터 구성
+
+```{r}
+income_by_job <- welfare %>% 
+  filter(!is.na(income) & !is.na(job)) %>% 
+  group_by(job) %>% 
+  summarise(income_mean = mean(income))
+
+income_by_job
+```
+
+### 급여가 많은 업종순으로 정렬
+
+```{r}
+top10_job <- income_by_job %>% 
+  arrange(desc(income_mean)) %>% 
+  head(10)
+
+top10_job
+```
+### 직업별 급여 시각화
+
+```{r}
+ggplot(top10_job, aes(x = reorder(job, income_mean), y = income_mean)) + geom_bar(stat="identity") + coord_flip()
+```
+```{r}
+
+# 1. 성별 직업 빈도
+
+#    성별 컬럼 : sex
+#    직업 컬럼 : code_job, job
+
+# 2. 지역과 연령대 사이의 관계 ( 청년층이 많은 지역 또는 노년층이 많은 지역  )
+
+#    지역 컬럼 : code_region (1 : 서울, 2 : 수도권 (경기, 인천), 3: 부산/경남/울산, 4 : 대구/경북, 5 : 대전/충남, 6 : 강원 / 충북, 7 : 광주/전남/전북/제주 )
+#    연령대 컬럼 : age2 ( ~ 30 : young, 30 ~ 60 : middle, 60 ~ : old )
+
+```
 
