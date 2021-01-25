@@ -136,18 +136,117 @@ xtabs(~ Sex + Exer, data = survey)
 
 chisq.test(xtabs(~Sex + Exer, data = survey))
 
+### 카이제곱 검정
+
+xtabs(~W.Hnd + Clap, data = survey)
+chisq.test(xtabs(~W.Hnd + Clap, data = survey))
+
+fisher.test(xtabs(~ W.Hnd + Clap, data = survey))
+
+# 맥니마 검정
+
+help(mcnemar.test)
+Performance <-
+  matrix(c(794, 86, 150, 570),
+         nrow = 2,
+         dimnames = list("1st Survey" = c("Approve", "Disapprove"),
+                         "2nd Survey" = c("Approve", "Disapprove")))
+Performance
+mcnemar.test(Performance)
+
+### 분포에 대한 검정
+
+table(survey$W.Hnd)
+chisq.test(table(survey$W.Hnd), p = c(.2, .8))
+
+binom.test(86, 86 + 150, 0.5)
+
+shapiro.test(rnorm(1000))
+
+### t.test
+
+x <- rnorm(30)
+mean(x)
+sd(x)
+t.test(x)
+
+?t.test
+
+### t.test 2
+
+score1 <- read.csv("data-files/tdata.csv", header = T)
+score1
+
+mean(score1$성적)
+result <- t.test(score1$성적, alternative = c("greater"), mu = 75)
+result
+
+score2 <- read.csv("data-files/tdata2.csv", header = T)
+score2
+
+mean(score2$성적)
+result2 <- t.test(score2$성적, alternative = c("greater"), mu = 75)
+result2
+
+### 두 연속형 변수 비교
+
+sleep
+sleep2 <- sleep[, -3]
+sleep2
+
+tapply(sleep2$extra, sleep2$group, mean)
+
+library(doBy)
+summaryBy(extra ~ group, sleep2)
+
+var.test(extra ~ group, sleep2) # 등분산성 검정
+
+t.test(extra ~ group, data = sleep2, paired = FALSE, var.equal = TRUE)
+
+### 짝지은 이표본 평균 비교
+
+sleep
+sleep$extra[sleep$group == 1]
+sleep$extra[sleep$group == 2]
+
+with(sleep, # 이후에는 sleep 생략 가능 
+     t.test(extra[group == 1], extra[group == 2], 
+            paired = TRUE))
+
+### 분산 분석
+
+a <- c(100, 98, 85, 90, 88, 80)
+b <- c(73, 80, 80, 75, 67, 57)
+c <- c(110, 104, 91, 109, 85, 95)
+life <- data.frame(a, b, c)
+life
+b.life <- stack(life)
+b.life
+
+op = par(mfrow = c(1, 2))
+boxplot(values ~ ind, data = b.life)
+stripchart(life)
+par(op)
+
+oneway.test(values ~ ind, data = b.life, var.equal = TRUE)
 
 
+b.life.aov <- aov(values ~ ind, data = b.life)
+summary(b.life.aov)
+
+b.life.lm <- lm(values ~ ind, data = b.life)
+anova(b.life.lm)
+
+### 이원분산분석
+
+twoway.comparisons.data <- read.csv('data-files/twoway-comparisons.csv')
+print(twoway.comparisons.data)
 
 
+towway.comparisons.data.aov <- aov(StressReduction ~ Treatment * Age,
+                                   twoway.comparisons.data)
+summary(towway.comparisons.data.aov)
 
-
-
-
-
-
-
-
-
-
-
+towway.comparisons.data.aov <- aov(StressReduction ~ Treatment + Age,
+                                   twoway.comparisons.data)
+summary(towway.comparisons.data.aov)
