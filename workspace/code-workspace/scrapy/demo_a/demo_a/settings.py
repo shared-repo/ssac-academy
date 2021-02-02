@@ -64,7 +64,8 @@ DOWNLOAD_DELAY = 1
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'demo_a.pipelines.DemoAPipeline': 300,
-   'demo_a.pipelines.LottoInsertPipeline': 400,
+   'demo_a.pipelines.LottoDupCheckPipeline': 400,
+   'demo_a.pipelines.LottoInsertPipeline': 410,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
