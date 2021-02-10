@@ -7,44 +7,51 @@
 {% block main_content %}
 
                         <div class="row">
-                            <div class="col-lg-12">
-                                <div class="card">
+                            <div class="col-lg-8">
+                                <div class="card h-100">
                                     <div class="card-header">
-                                        <strong>Company</strong>
-                                        <small> Form</small>
+                                        <strong>Iris Species Prediction Form</strong>
                                     </div>
                                     <div class="card-body card-block">
+                                    <form id="iris-form">{% csrf_token %}
                                         <div class="form-group">
-                                            <label for="company" class=" form-control-label">Company</label>
-                                            <input type="text" id="company" placeholder="Enter your company name" class="form-control">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="vat" class=" form-control-label">VAT</label>
-                                            <input type="text" id="vat" placeholder="DE1234567890" class="form-control">
+                                            <label for="sepal_length" class=" form-control-label">Sepal Length</label>
+                                            <input type="text" id="sepal_length" name="sepal_length" placeholder="Enter Sepal Length" class="form-control">
                                         </div>
                                         <div class="form-group">
-                                            <label for="street" class=" form-control-label">Street</label>
-                                            <input type="text" id="street" placeholder="Enter street name" class="form-control">
-                                        </div>
-                                        <div class="row form-group">
-                                            <div class="col-8">
-                                                <div class="form-group">
-                                                    <label for="city" class=" form-control-label">City</label>
-                                                    <input type="text" id="city" placeholder="Enter your city" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-8">
-                                                <div class="form-group">
-                                                    <label for="postal-code" class=" form-control-label">Postal Code</label>
-                                                    <input type="text" id="postal-code" placeholder="Postal Code" class="form-control">
-                                                </div>
-                                            </div>
+                                            <label for="sepal_width" class=" form-control-label">Sepal Width</label>
+                                            <input type="text" id="sepal_width" name="sepal_width" placeholder="Enter Sepal Width" class="form-control">
                                         </div>
                                         <div class="form-group">
-                                            <label for="country" class=" form-control-label">Country</label>
-                                            <input type="text" id="country" placeholder="Country name" class="form-control">
+                                            <label for="petal_length" class=" form-control-label">Petal Length</label>
+                                            <input type="text" id="petal_length" name="petal_length" placeholder="Enter Petal Length" class="form-control">
                                         </div>
+                                        <div class="form-group">
+                                            <label for="petal_width" class=" form-control-label">Petal Width</label>
+                                            <input type="text" id="petal_width" name="petal_width" placeholder="Enter Petal Width" class="form-control">
+                                        </div>
+                                    </form>
                                     </div>
+                                    <div class="card-footer">
+                                        <button id="iris-submit" type="submit" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-dot-circle-o"></i> Predict
+                                        </button>
+                                        <button id="iris-reset" type="reset" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-ban"></i> Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <strong>Iris Species Prediction Result</strong>
+                                    </div>
+                                    <div class="card-body card-block">
+                                        <div id="iris-result" class="alert alert-primary" role="alert">&nbsp;</div>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
