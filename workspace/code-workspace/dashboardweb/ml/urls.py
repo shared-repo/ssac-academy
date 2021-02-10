@@ -4,6 +4,6 @@ from .views import MlHomeView
 
 urlpatterns = [
 
-    path('', MlHomeView.as_view(), 'home'),
+    path('', MlHomeView.as_view(), name='home'),
 
 ]
