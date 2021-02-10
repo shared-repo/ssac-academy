@@ -63,7 +63,7 @@
                                         <strong>Diabetes Prediction Form</strong>
                                     </div>
                                     <div class="card-body card-block">
-                                    <form id="iris-form">{% csrf_token %}
+                                    <form id="diabetes-form">{% csrf_token %}
                                         <div class="form-group">
                                             <label for="pregnancies" class="form-control-label">Pregnancies</label>
                                             <input type="text" id="pregnancies" name="pregnancies" placeholder="Enter Pregnancies" class="form-control">
@@ -162,6 +162,36 @@ $(function() {
 
         });
 
+    });
+
+    $('#diabetes-reset').on('click', function(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        $('#diabetes-form input').val('');
+
+    });
+
+    $('#diabetes-submit').on('click', function(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        var form_data = $('#diabetes-form').serialize()
+
+        $.ajax({
+            "url": "diabetes-predict",
+            "method": "post",
+            "data": form_data,
+            "dataType": "json",
+            "success": function(data, status, xhr) {
+                $('#diabetes-result').text(data.predicted_value);
+            }, 
+            "error": function(xhr, status, err) {
+                alert(err);
+            }
+        })
     });
 
 });
