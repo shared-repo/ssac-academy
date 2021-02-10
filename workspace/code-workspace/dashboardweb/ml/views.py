@@ -83,10 +83,10 @@ class DiabetesPredictView(View):
         age = float(request.POST.get('age'))
 
         # 테스트 코드
-        print([pregnancies, glucose, blood_pressure, blood_pressure, skin_thickness, insulin, bmi, diabetes_pedigree_function, age])
+        print([pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, diabetes_pedigree_function, age])
 
         # 입력 데이터에 대한 Scale 변환
-        scaled_data = self.scaler.transform([[pregnancies, glucose, blood_pressure, blood_pressure, skin_thickness, insulin, bmi, diabetes_pedigree_function, age]])
+        scaled_data = self.scaler.transform([[pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, diabetes_pedigree_function, age]])
 
         # Scale 변환된 데이터로 예측 실행
         predicted_value = self.estimator.predict(scaled_data)
