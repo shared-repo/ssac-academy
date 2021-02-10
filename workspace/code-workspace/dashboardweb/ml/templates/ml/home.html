@@ -59,3 +59,45 @@
                         {% include 'copyright.html' %}
 
 {% endblock main_content %}
+
+{% block custom_js %}
+
+<script type="text/javascript">
+$(function() {
+
+    $('#iris-reset').on('click', function(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        $('#iris-form input').val('');
+
+    });
+
+    $('#iris-submit').on('click', function(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        var form_data = $('#iris-form').serialize(); // <form>에 포함된 모든 입력 요소의 값을 이름=값&이름=값의 형식으로 반환하는 함수
+
+        $.ajax({
+            "url": 'predict-species',
+            "method": 'post',
+            "data": form_data,
+            "dataType": 'json', // 수신하는 데이터 타입 (서버에서 응답하는 데이터 타입)
+            "success": function(data, status, xhr) {
+
+            },
+            "error": function(xhr, status, err) {
+                alert(err);
+            }
+
+        });
+
+    });
+
+});
+</script>
+
+{% endblock custom_js %}
