@@ -24,4 +24,5 @@ urlpatterns = [
 
     path('stocks/', include('stocks.urls')),
     path('covid19/', include('covid19.urls')),
+    path('ml/', include('ml.urls'))
 ]
