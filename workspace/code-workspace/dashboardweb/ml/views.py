@@ -55,3 +55,52 @@ class IrisPredictView(View):
 
         # 요청에 대한 응답 전송
         return HttpResponse(json_value, content_type='application/json')
+
+
+class DiabetesPredictView(View):
+
+    def __init__(self):
+        import joblib
+
+        estimator = joblib.load('ml/estimators/diabetes-model.pkl')
+        scaler = joblib.load('ml/estimators/diabetes-scaler.pkl')
+
+        self.estimator = estimator
+        self.scaler = scaler
+
+    # def get(self, request):
+    #     pass
+
+    def post(self, request):
+        # 요청 데이터를 읽기 (사용자가 브라우저에서 입력하고 전송한 데이터 읽기)
+        pregnancies = float(request.POST.get('pregnancies'))
+        glucose = float(request.POST.get('glucose'))
+        blood_pressure = float(request.POST.get('blood_pressure'))
+        skin_thickness = float(request.POST.get('skin_thickness'))
+        insulin = float(request.POST.get('insulin'))
+        bmi = float(request.POST.get('bmi'))
+        diabetes_pedigree_function = float(request.POST.get('diabetes_pedigree_function'))
+        age = float(request.POST.get('age'))
+
+        # 테스트 코드
+        print([pregnancies, glucose, blood_pressure, blood_pressure, skin_thickness, insulin, bmi, diabetes_pedigree_function, age])
+
+        # 입력 데이터에 대한 Scale 변환
+        scaled_data = self.scaler.transform([[pregnancies, glucose, blood_pressure, blood_pressure, skin_thickness, insulin, bmi, diabetes_pedigree_function, age]])
+
+        # Scale 변환된 데이터로 예측 실행
+        predicted_value = self.estimator.predict(scaled_data)
+
+        # 예측 결과를 사용자 친화적인 표현으로 변경 (숫자 -> 문자열)
+        predicted_str_value = 'No Diabetes' if predicted_value[0] == 0 else 'Diabetes'
+
+        # 테스트 코드
+        print(predicted_value, predicted_str_value)
+
+        # Json 형식의 응답 문자열 만들기
+        import json
+
+        json_value = json.dumps( { "predicted_value" : predicted_str_value }, ensure_ascii=False )
+
+        # 요청에 대한 응답 전송
+        return HttpResponse(json_value, content_type='application/json')
