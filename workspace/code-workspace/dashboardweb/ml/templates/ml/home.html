@@ -54,6 +54,72 @@
                                     
                                 </div>
                             </div>
+
+                            <div class="col-lg-12" style="height:10px"></div>
+
+                            <div class="col-lg-8">
+                                <div class="card h-200">
+                                    <div class="card-header">
+                                        <strong>Diabetes Prediction Form</strong>
+                                    </div>
+                                    <div class="card-body card-block">
+                                    <form id="iris-form">{% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="pregnancies" class="form-control-label">Pregnancies</label>
+                                            <input type="text" id="pregnancies" name="pregnancies" placeholder="Enter Pregnancies" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="glucose" class="form-control-label">Glucose</label>
+                                            <input type="text" id="glucose" name="glucose" placeholder="Enter Glucose" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="blood_pressure" class="form-control-label">Blood Pressure</label>
+                                            <input type="text" id="blood_pressure" name="blood_pressure" placeholder="Enter Blood Pressure" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="skin_thickness" class="form-control-label">Skin Thickness</label>
+                                            <input type="text" id="skin_thickness" name="skin_thickness" placeholder="Enter Skin Thickness" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="insulin" class="form-control-label">Insulin</label>
+                                            <input type="text" id="insulin" name="insulin" placeholder="Enter Insulin" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="bmi" class=" form-control-label">BMI</label>
+                                            <input type="text" id="bmi" name="bmi" placeholder="Enter BMI" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="diabetes_pedigree_function" class=" form-control-label">Diabetes Pedigree Function</label>
+                                            <input type="text" id="diabetes_pedigree_function" name="diabetes_pedigree_function" placeholder="Enter Diabetes Pedigree Function" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="age" class=" form-control-label">Age</label>
+                                            <input type="text" id="age" name="age" placeholder="Age" class="form-control">
+                                        </div>
+                                    </form>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button id="diabetes-submit" type="submit" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-dot-circle-o"></i> Predict
+                                        </button>
+                                        <button id="diabetes-reset" type="reset" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-ban"></i> Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="card h-200">
+                                    <div class="card-header">
+                                        <strong>Diabetes Prediction Result</strong>
+                                    </div>
+                                    <div class="card-body card-block">
+                                        <div id="diabetes-result" class="alert alert-primary" role="alert">&nbsp;</div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
                         </div>
 
                         {% include 'copyright.html' %}
