@@ -87,7 +87,8 @@ $(function() {
             "data": form_data,
             "dataType": 'json', // 수신하는 데이터 타입 (서버에서 응답하는 데이터 타입)
             "success": function(data, status, xhr) {
-
+                // alert(data.predicted_value);
+                $('#iris-result').text(data.predicted_value);
             },
             "error": function(xhr, status, err) {
                 alert(err);
