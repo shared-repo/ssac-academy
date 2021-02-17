@@ -89,13 +89,24 @@ WSGI_APPLICATION = 'demoweb.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'HOST': 'localhost',
+#         'PORT': 3306,
+#         'NAME': "demowebdb",
+#         'USER': 'root',
+#         'PASSWORD': 'Pa$$w0rd'
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
+        'HOST': '192.168.56.100',
         'PORT': 3306,
         'NAME': "demowebdb",
-        'USER': 'root',
+        'USER': 'ssac',
         'PASSWORD': 'Pa$$w0rd'
     }
 }
