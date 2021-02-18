@@ -1,0 +1,14 @@
+WSGIScriptAlias / /home/ssac/webapps/demoweb2/demoweb/wsgi.py
+WSGIPythonHome /opt/miniconda3/envs/ssac
+WSGIPythonPath /home/ssac/webapps/demoweb2
+
+<Directory /home/ssac/webapps/demoweb2/demoweb>
+<Files wsgi.py>
+Require all granted
+</Files>
+</Directory>
+
+Alias /static/ /home/ssac/webapps/demoweb2/www_dir/static/
+<Directory /home/ssac/webapps/demoweb2/www_dir/static>
+Require all granted
+</Directory>
