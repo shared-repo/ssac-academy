@@ -26,7 +26,7 @@
 
    jdk 파일 업로드
    - windows : MobaXTerm의 좌측 sftp 탭의 업로드 기능 사용
-   - mac : 터미널에서 scp jdk-file root@192.168.56.101:/root/ 명령 실행    
+   - mac : 터미널에서 jdk-8u281-linux-x64.tar.gz jdk-file root@192.168.56.101:/root/ 명령 실행    
 
    gunzip jdk-8u281-linux-x64.tar.gz
 
@@ -34,13 +34,13 @@
 
    rm -f jdk-8u281-linux-x64.tar
 
-   mv jdk-8u281-linux-x64 /usr/local/
+   mv jdk1.8.0_281 /usr/local/
 
    cd /usr/local
 
    rm -f active-java ( 기존에 있는 경우 )
 
-   ln -s jdk-8u281-linux-x64 active-java
+   ln -s jdk1.8.0_281 active-java
 
    cd ~
 

@@ -100,7 +100,7 @@ export HADOOP_LOG_DIR=/home/hadoop/data/hadoop/logs
 
    cd ~
 
-   mkdir data/hadoop/dfs
+   mkdir -p data/hadoop/dfs
    mkdir data/hadoop/dfs/namenode
    mkdir data/hadoop/dfs/datanode
    mkdir data/hadoop/dfs/namesecondary

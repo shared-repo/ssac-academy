@@ -1,0 +1,72 @@
+9. 가상머신 복제
+
+   server-a를 복제해서 server-b, server-c 만들기
+
+   복제된 가상머신 server-b 시작
+
+   MobaXTerm으로 접속
+
+   vi /etc/sysconfig/network-scripts/ifcfg-enp0s8
+
+      : IPADDR=192.168.56.102
+
+   hostnamectl set-hostname server-b
+
+   shutdown -r now
+
+   복제된 가상머신 server-c 시작
+
+   MobaXTerm으로 접속
+
+   vi /etc/sysconfig/network-scripts/ifcfg-enp0s8
+
+      : IPADDR=192.168.56.103
+
+   hostnamectl set-hostname server-c
+
+   shutdown -r now
+
+10. 인증서 설치 
+
+   (server-a 머신에서 실행)
+
+   ssh-keygen -t rsa
+
+   다음 프롬프트가 나올 때까지 enter 반복
+
+   ssh-copy-id -i hadoop@server-a
+
+   ssh-copy-id -i hadoop@server-b
+
+   ssh-copy-id -i hadoop@server-c
+
+   (ssh hadoop@server-b, ssh hadoop@server-c 명령으로 확인)
+   
+11. format hdfs
+
+   (server-a 머신에서 실행)
+
+   cd ~/apps
+
+   hdfs namenode -format
+
+12. start hdfs server
+
+   start-dfs.sh
+
+13. 실행 확인
+
+   server-a, server-b, server-c에서 각각 jps 명령 실행
+
+14. hdfs 사용
+
+   hdfs dfs -ls /
+
+   hdfs dfs -mkdir /user
+
+   hdfs dfs -mkdir /user/hadoop
+
+   hdfs dfs -put hadoop/etc/hadoop/hadoop-env.sh .
+
+   hdfs dfs -ls .
+   
