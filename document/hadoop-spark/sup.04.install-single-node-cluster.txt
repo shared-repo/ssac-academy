@@ -1,0 +1,161 @@
+1. 머신 복제
+
+   server-a를 복제해서 server-pd 만들기
+
+2. 복제된 머신 네트워크 설정
+
+   server-pd 머신 시작
+
+   root 계정으로 로그인
+
+   vi /etc/sysconfig/network-scripts
+
+     : IPADDR=192.168.56.111
+
+   vi /etc/hosts
+
+     : 192.168.56.111 server-pd
+
+   hostnamectl set-hostname server-pd
+
+   shutdown -r now
+
+3. hdfs 설정 변경
+
+   core-site.xml
+
+<configuration>
+
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://server-pd:9000</value>
+    </property>
+
+</configuration>
+
+   ----------------
+
+   hdfs-site.xml
+
+<configuration>
+
+        <property>
+                <name>dfs.replication</name>
+                <value>1</value>
+        </property>
+        <property>
+                <name>dfs.namenode.name.dir</name>
+                <value>/home/hadoop/data/hadoop/dfs/namenode</value>
+        </property>
+        <property>
+                <name>dfs.datanode.data.dir</name>
+                <value>/home/hadoop/data/hadoop/dfs/datanode</value>
+        </property>
+
+</configuration>
+
+   -----------------
+
+   workers
+
+      server-pd
+
+   ----------
+
+4. hdfs 실행
+
+   hdfs namenode -format
+
+   start-dfs.sh
+
+   jps --> namenode, secondarynamenode, datanode 확인
+
+   hdfs dfs -mkdir /user
+
+   hdfs dfs -mkdir /user/hadoop
+   
+   hdfs dfs -mkdir /user/hadoop/data-files
+
+   hdfs dfs -mkdir /user/hadoop/output
+
+5. yarn 설정 변경
+
+   mapred-site.xml 
+
+<configuration>
+
+        <property>
+                <name>mapreduce.framework.name</name>
+                <value>yarn</value>
+        </property>
+        <property>
+                <name>yarn.nodemanager.vmem-check-enabled</name>
+                <value>false</value>
+        </property>
+
+</configuration>
+
+   ---------------
+
+   yarn-site.xml
+
+<configuration>
+
+<!-- Site specific YARN configuration properties -->
+
+        <property>
+                <name>yarn.nodemanager.aux-services</name>
+                <value>mapreduce_shuffle</value>
+        </property>
+        <property>
+                <name>yarn.application.classpath</name>
+                <value>
+                        /home/hadoop/apps/hadoop/etc/hadoop,
+                        /home/hadoop/apps/hadoop/share/hadoop/common/*,
+                        /home/hadoop/apps/hadoop/share/hadoop/common/lib/*,
+                        /home/hadoop/apps/hadoop/share/hadoop/hdfs/*,
+                        /home/hadoop/apps/hadoop/share/hadoop/hdfs/lib/*,
+                        /home/hadoop/apps/hadoop/share/hadoop/yarn/*,
+                        /home/hadoop/apps/hadoop/share/hadoop/yarn/lib/*,
+                        /home/hadoop/apps/hadoop/share/hadoop/mapreduce/*,
+                        /home/hadoop/apps/hadoop/share/hadoop/mapreduce/lib/*
+                </value>
+        </property>
+        <property>
+                <name>yarn.nodemanager.local-dirs</name>
+                <value>/home/hadoop/data/hadoop/yarn/local-dir</value>
+        </property>
+        <property>
+                <name>yarn.resourcemanager.fs.state-store.uri</name>
+                <value>/home/hadoop/data/hadoop/yarn/rmstore</value>
+        </property>
+        <property>
+                <name>yarn.resourcemanager.hostname</name>
+                <value>server-pd</value>
+        </property>
+        <property>
+                <name>yarn.resourcemanager.nodes.include-path</name>
+                <value>/home/hadoop/apps/hadoop/etc/hadoop/workers</value>
+        </property>
+        <property>
+                <name>yarn.nodemanager.log-dirs</name>
+                <value>/home/hadoop/data/hadoop/yarn/log-dir</value>
+        </property>
+
+</configuration>
+
+6. yarn 실행
+
+   start-yarn.sh
+
+   jps --> resourcemanager, nodemanager 확인
+
+7. 예제 실행
+
+   hdfs dfs -put $HADOOP_HOME/etc/hadoop/hadoop-env.sh data-files
+
+   yarn jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.2.jar wordcount data-files/hadoop-env.sh output/wordcount 
+
+   hdfs dfs -ls output/wordcount
+
+   hdfs dfs -cat output/wordcount/part-r-00000  

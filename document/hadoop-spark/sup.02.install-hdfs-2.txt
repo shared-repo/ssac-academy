@@ -1,0 +1,109 @@
+7. install hadoop
+
+   su hadoop
+
+   cd
+
+   mkdir apps
+
+   cd apps
+
+   wget https://downloads.apache.org/hadoop/common/hadoop-3.2.2/hadoop-3.2.2.tar.gz
+
+   gunzip hadoop-3.2.2.tar.gz
+
+   tar -xvf hadoop-3.2.2.tar
+
+   rm -f hadoop-3.2.2.tar
+
+   ln -s hadoop-3.2.2 hadoop
+
+   vi /etc/profile
+
+      : export HADOOP_HOME=/home/hadoop/apps/hadoop
+
+      : PATH=$PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+
+   source /etc/profile
+
+   echo $HADOOP_HOME
+
+   echo $PATH
+
+8. configure hadoop
+
+   cd /home/hadoop/apps/hadoop/etc/hadoop
+
+   ======================
+
+   vi hadoop-env.sh
+
+export JAVA_HOME=/usr/local/active-java
+export HADOOP_PID_DIR=/home/hadoop/data/hadoop/pids
+export HADOOP_LOG_DIR=/home/hadoop/data/hadoop/logs
+
+   ======================
+
+   vi core-site.xml
+
+<configuration>
+
+        <property>
+                <name>fs.defaultFS</name>
+                <value>hdfs://server-a:9000</value>
+        </property>
+        <property>
+                <name>io.file.buffersize</name>
+                <value>131072</value>
+        </property>
+
+</configuration>
+
+   ===================================
+
+   vi hdfs-site.xml
+
+<configuration>
+
+        <property>
+                <name>dfs.replication</name>
+                <value>2</value>
+        </property>
+        <property>
+                <name>dfs.namenode.name.dir</name>
+                <value>/home/hadoop/data/hadoop/dfs/namenode</value>
+        </property>
+
+        <property>
+                <name>dfs.blocksize</name>
+                <value>268435456</value>
+        </property>
+        <property>
+                <name>dfs.namenode.handler.count</name>
+                <value>100</value>
+        </property>
+        <property>
+                <name>dfs.datanode.data.dir</name>
+                <value>/home/hadoop/data/hadoop/dfs/datanode</value>
+        </property>
+
+</configuration>
+
+   ========================
+
+   vi workers
+
+      server-b
+      server-c
+
+   =========================
+
+   cd ~
+
+   mkdir data/hadoop/dfs
+   mkdir data/hadoop/dfs/namenode
+   mkdir data/hadoop/dfs/datanode
+   mkdir data/hadoop/dfs/namesecondary
+   mkdir data/hadoop/pids
+   mkdir data/hadoop/logs
+

@@ -1,0 +1,104 @@
+1. yarn 설정
+
+   server-a 머신에서 작업
+
+   vi $HADOOP_HOME/etc/hadoop/mapred-site.xml
+
+<configuration>
+
+        <property>
+                <name>mapreduce.framework.name</name>
+                <value>yarn</value>
+        </property>
+
+</configuration>
+
+   ==============================
+
+  vi $HADOOP_HOME/etc/hadoop/yarn-site.xml
+   
+<configuration>
+
+<!-- Site specific YARN configuration properties -->
+
+	<property>
+		<name>yarn.nodemanager.aux-services</name>
+		<value>mapreduce_shuffle</value>
+	</property>
+	<property>
+		<name>yarn.application.classpath</name>		
+		<value>
+			/home/hadoop/apps/hadoop/etc/hadoop,
+			/home/hadoop/apps/hadoop/share/hadoop/common/*,
+			/home/hadoop/apps/hadoop/share/hadoop/common/lib/*,
+			/home/hadoop/apps/hadoop/share/hadoop/hdfs/*,
+			/home/hadoop/apps/hadoop/share/hadoop/hdfs/lib/*,
+			/home/hadoop/apps/hadoop/share/hadoop/yarn/*,
+			/home/hadoop/apps/hadoop/share/hadoop/yarn/lib/*,
+			/home/hadoop/apps/hadoop/share/hadoop/mapreduce/*,
+			/home/hadoop/apps/hadoop/share/hadoop/mapreduce/lib/*
+		</value>
+	</property>
+	<property>
+		<name>yarn.nodemanager.local-dirs</name>
+		<value>/home/hadoop/data/hadoop/yarn/local-dir</value>
+	</property>
+	<property>
+		<name>yarn.resourcemanager.fs.state-store.uri</name>
+		<value>/home/hadoop/data/hadoop/yarn/rmstore</value>
+	</property>
+	<property>
+		<name>yarn.resourcemanager.hostname</name>
+		<value>server-a</value>
+	</property>
+	<property>
+		<name>yarn.resourcemanager.nodes.include-path</name>
+		<value>/home/hadoop/apps/hadoop/etc/hadoop/workers</value>
+	</property>
+	<property>
+		<name>yarn.nodemanager.log-dirs</name>
+		<value>/home/hadoop/data/hadoop/yarn/log-dir</value>
+	</property>
+
+</configuration>
+
+2. 설정 복사
+
+   scp $HADOOP_HOME/etc/hadoop/mapred-site.xml hadoop@server-b:/home/hadoop/apps/hadoop/etc/hadoop/
+   scp $HADOOP_HOME/etc/hadoop/mapred-site.xml hadoop@server-c:/home/hadoop/apps/hadoop/etc/hadoop/
+   scp $HADOOP_HOME/etc/hadoop/yarn-site.xml hadoop@server-b:/home/hadoop/apps/hadoop/etc/hadoop/
+   scp $HADOOP_HOME/etc/hadoop/yarn-site.xml hadoop@server-c:/home/hadoop/apps/hadoop/etc/hadoop/
+
+3. yarn 시작 및 확인
+
+   server-a 머신에서 실행
+
+   start-yarn.sh
+
+   jps --> resourcemanager 프로세스 확인
+
+   server-b, server-c 머신에서 실행
+
+   jps --> nodemanager 프로세스 확인
+
+4. 예제 실행
+
+   server-a 머신에서 실행
+
+   hdfs dfs -mkdir data-files
+
+   hdfs dfs -mv hadoop-env.sh data-files/
+
+   hdfs dfs -ls
+
+   hdfs dfs -ls data-files
+
+   yarn jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.2.jar wordcount data-files/hadoop-env.sh output/wordcount
+
+   화면에 표시되는 내용 확인
+
+   hdfs dfs -ls output/wordcount/
+     
+   hdfs dfs -cat output/wordcount/part-r-00000
+
+   
