@@ -166,6 +166,20 @@
    hdfs dfs -cat output/wordcount/part-r-00000  
    
    
+-----------------------------------------
+
+python map-reducer test
+
+mapper.py, reducer.py를 ~/workspace/hive/에 복사
+
+cd ~/workspace/hive
+
+cp $HADOOP_HOME/etc/hadoop/hadoop-env.sh .
+
+hadoop jar ~/apps/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.2.2.jar -file mapper.py -mapper mapper.py -file reducer.py -reducer reducer.py -input /user/hadoop/data-files/hadoop-env.sh -output /user/hadoop/output/python-wordcount4
+
+   
+   
    
    
    

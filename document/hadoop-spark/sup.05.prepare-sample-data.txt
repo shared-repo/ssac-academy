@@ -17,7 +17,7 @@ cd ~/workspace/hive/data-files/
     vi extract_files.sh
 
     --
-    !#/bin/bash
+    #!/bin/bash
 
     # 년도는 사용할 파일에 따라 변경
     for ((i=2001; i<=2003; i++)); do
