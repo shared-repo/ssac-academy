@@ -152,10 +152,28 @@
 
 7. 예제 실행
 
+   hdfs dfs -mkdir /user
+   hdfs dfs -mkdir /user/hadoop
+   hdfs dfs -mkdir /user/hadoop/data-files
+   hdfs dfs -mkdir /user/hadoop/outputs
+
    hdfs dfs -put $HADOOP_HOME/etc/hadoop/hadoop-env.sh data-files
 
-   yarn jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.2.jar wordcount data-files/hadoop-env.sh output/wordcount 
+   yarn jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.2.jar wordcount data-files/hadoop-env.sh outputs/wordcount 
 
    hdfs dfs -ls output/wordcount
 
    hdfs dfs -cat output/wordcount/part-r-00000  
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
