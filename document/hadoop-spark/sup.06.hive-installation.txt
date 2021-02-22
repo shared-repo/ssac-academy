@@ -26,6 +26,8 @@ hdfs dfs -chmod g+w /user/hive/warehouse
 
 cp ~/apps/hive/conf/hive-env.sh.template ~/apps/hive/conf/hive-env.sh
 
+vi ~/apps/hive/conf/hive-env.sh
+
     # Set HADOOP_HOME to point to a specific hadoop install directory
     # HADOOP_HOME=${bin}/../../hadoop
     HADOOP_HOME=/home/hadoop/apps/hadoop
@@ -33,28 +35,28 @@ cp ~/apps/hive/conf/hive-env.sh.template ~/apps/hive/conf/hive-env.sh
 
 vi ~/apps/hive/conf/hive-site.xml
 
-    <?xml version="1.0" ?>
+	<?xml version="1.0" ?>
 
-    <?xml-stylesheet type="text/xsl" href="configuration.xsl" ?>
+	<?xml-stylesheet type="text/xsl" href="configuration.xsl" ?>
 
-    <configuration>
+	<configuration>
 
-        <property>
-        <name>hive.metastore.warehouse.dir</name>
-        <value>/user/hive/warehouse/</value>
-        </property>
+		<property>
+		<name>hive.metastore.warehouse.dir</name>
+		<value>/user/hive/warehouse/</value>
+		</property>
 
-        <property>
-        <name>hive.cli.print.header</name>
-        <value>true</value>
-        </property>
+		<property>
+		<name>hive.cli.print.header</name>
+		<value>true</value>
+		</property>
 
-    </configuration>
+	</configuration>
 
 rm ~/apps/hive/lib/guava-19.0.jar ( or mv ~/apps/hive/lib/guava-19.0.jar . )
 
-cp ls ~/apps/hadoop/share/hadoop/common/lib/guava-27.0-jre.jar ~/apps/hive/lib/
+cp ~/apps/hadoop/share/hadoop/common/lib/guava-27.0-jre.jar ~/apps/hive/lib/
 
 cd ~/path-for-working-directory
 
-schematool --dyType derby --initSchema
+schematool --dbType derby --initSchema

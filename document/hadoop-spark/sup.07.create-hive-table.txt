@@ -1,0 +1,82 @@
+CREATE TABLE airline_delay(
+Year INT,
+Month int,
+DayofMonth INT,
+DayOfWeek INT,
+DepTime INT,
+CRSDepTime INT,
+ArrTime INT,
+CRSArrTime INT,
+UniqueCarrier STRING,
+FlightNum INT,
+TailNum INT,
+ActualElapsedTime INT,
+CRSElapsedTime INT,
+AirTime INT,
+ArrDelay INT,
+DepDelay INT,
+Origin STRING,
+Dest STRING,
+Distance INT,
+TaxiIn INT,
+TaxiOut INT,
+Cancelled INT,
+CancellationCode STRING COMMENT 'A = carrier, B = weather, C = NAS, D = security',
+Diverted INT COMMENT '1 = yes, 0 = no',
+CarrierDelay STRING,
+WeatherDelay STRING,
+NASDelay STRING,
+SecurityDelay STRING,
+LateAircraftDelay STRING
+)
+PARTITIONED BY (delayYear INT)
+ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    LINES TERMINATED BY '\n'
+    STORED AS TEXTFILE
+LOCATION '/users/hadoop/airline_delay';
+
+=================================
+
+LOAD DATA LOCAL INPATH '/home/hadoop/workspace/hive/data-files/2001.csv'
+OVERWRITE INTO TABLE airline_delay
+PARTITION (delayYear='2001');
+
+or
+
+LOAD DATA INPATH '/user/hadllp/data-files/2001.csv'
+OVERWRITE INTO TABLE airline_delay
+PARTITION (delayYear='2001');
+
+=================================
+
+CREATE TABLE carrier_code (
+    Code STRING,
+    Description STRING
+)
+ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    LINES TERMINATED BY '\n'
+STORED AS TEXTFILE;
+
+LOAD DATA INPATH '/user/hadoop/data-files/carriers.csv'
+OVERWRITE INTO TABLE carrier_code
+
+===============================
+
+CREATE TABLE airport_code (
+    Iata STRING,
+    Airport STRING,
+    City STRING,
+    State STRING,
+    Country STRING,
+    Lat Double,
+    Lng Double
+)
+ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    LINES TERMINATED BY '\n'
+STORED AS TEXTFILE;
+
+LOAD DATA INPATH '/user/hadoop/data-files/airports.csv'
+OVERWRITE INTO TABLE airport_code
