@@ -1,0 +1,74 @@
+[ perpare data ]
+
+cd ~
+
+mkdir -p workspace/hive/data-files
+
+200x.csv.bz2 파일을 위에서 만든 가상 머신 경로에 복사
+
+cd ~/workspace/hive/data-files/
+
+압축풀기1. 파일 개수만큼 아래 작업 반복
+    bzip2 -d 200x.csv.bz2
+    sed -e '1d' 200x.csv > 200x_temp.csv
+    mv 200x_temp.csv 200x.csv
+
+압축풀기2. 
+    vi extract_files.sh
+
+    --
+    !#/bin/bash
+
+    # 년도는 사용할 파일에 따라 변경
+    for ((i=2001; i<=2003; i++)); do
+        bzip2 -d $i.csv.bz2
+        sed -e '1d' $i.csv > $i_tmp.csv
+        mv $i_tmp.csv $i.csv
+    done
+    --
+    chmod a+x extract_files.sh
+    ./extract_files.sh
+
+hdfs dfs -put *.csv ./data-files
+
+hdfs dfs -ls ./data-files (업로드 확인)
+
+-------
+
+carriers.csv 파일을 위에서 만든 가상 머신 경로에 복사
+
+vi carriers.csv
+
+    : 첫 번째 행 삭제
+
+find . -name carriers.csv -exec perl -p -i -e 's/\"//g' {} \; ( 큰따옴표 제거 )
+
+hdfs dfs -put carriers.csv ./data-files/
+
+-------
+
+airports.csv 파일을 위에서 만든 가상 머신 경로에 복사
+
+vi airports.csv
+
+    : 첫 번째 행 삭제
+
+find . -name airports.csv -exec perl -p -i -e 's/\"//g' {} \; ( 큰따옴표 제거 )
+
+hdfs dfs -put airports.csv ./data-files/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

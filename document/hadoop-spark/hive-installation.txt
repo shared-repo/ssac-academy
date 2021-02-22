@@ -1,0 +1,60 @@
+[ hive installation ]
+
+cd ~/apps
+
+wget https://downloads.apache.org/hive/hive-3.1.2/apache-hive-3.1.2-bin.tar.gz
+
+gunzip apache-hive-3.1.2-bin.tar.gz
+
+tar xvf apache-hive-3.1.2-bin.tar
+
+ln -s apache-hive-3.1.2-bin hive
+
+sudo vi /etc/profile
+
+export HIVE_HOME=/home/hadoop/apps/hive
+
+PATH=$PATH:.....:$HIVE_HOME/bin
+
+# Hive에서 사용하는 임시 저장소
+hdfs dfs -mkdir /tmp
+hdfs dfs -chmod g+w /tmp
+
+# Hive에서 사용하는 데이터 저장소
+hdfs dfs -mkdir -p /user/hive/warehouse
+hdfs dfs -chmod g+w /user/hive/warehouse
+
+cp ~/apps/hive/conf/hive-env.sh.template ~/apps/hive/conf/hive-env.sh
+
+    # Set HADOOP_HOME to point to a specific hadoop install directory
+    # HADOOP_HOME=${bin}/../../hadoop
+    HADOOP_HOME=/home/hadoop/apps/hadoop
+
+
+vi ~/apps/hive/conf/hive-site.xml
+
+    <?xml version="1.0" ?>
+
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl" ?>
+
+    <configuration>
+
+        <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>/user/hive/warehouse/</value>
+        </property>
+
+        <property>
+        <name>hive.cli.print.header</name>
+        <value>true</value>
+        </property>
+
+    </configuration>
+
+rm ~/apps/hive/lib/guava-19.0.jar ( or mv ~/apps/hive/lib/guava-19.0.jar . )
+
+cp ls ~/apps/hadoop/share/hadoop/common/lib/guava-27.0-jre.jar ~/apps/hive/lib/
+
+cd ~/path-for-working-directory
+
+schematool --dyType derby --initSchema
