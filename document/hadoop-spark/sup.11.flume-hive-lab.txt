@@ -1,0 +1,108 @@
+[ 실습 ]
+
+cd ~/workspace/pilot/bins
+
+mkdir car-batch-log
+
+cp ~/workspace/flume/spool-to-hdfs.conf ./
+
+# flume agent 설정
+vi spool-to-hdfs.conf
+
+---
+agent1.sources = source1
+agent1.sinks = sink1
+agent1.channels = channel1
+
+agent1.sources.source1.channels = channel1
+agent1.sinks.sink1.channel = channel1
+
+agent1.sources.source1.type = spooldir
+agent1.sources.source1.spoolDir = /home/hadoop/workspace/pilot/bins/car-batch-log
+
+agent1.sinks.sink1.type = hdfs
+agent1.sinks.sink1.hdfs.path = /tmp/pilot
+agent1.sinks.sink1.hdfs.filePrefix = events
+agent1.sinks.sink1.hdfs.fileSuffix = .log
+agent1.sinks.sink1.hdfs.inUsePrefix = _
+agent1.sinks.sink1.hdfs.fileType = DataStream
+
+agent1.channels.channel1.type = file
+---
+
+# flume 시작
+cd ~/workspace/pilot/bins/
+
+flume --conf $FLUME_HOME/conf --conf-file spool-to-hdfs.conf --name agent1
+
+# 다른 터미널로 이동
+# 로그 파일 만들기
+
+cd ~/workspace/pilot/bins
+
+rm -f SmartCar/*
+rm -f car-batch-log/*
+
+java -cp bigdata.smartcar.loggen-1.0.jar com.wikibook.bigdata.smartcar.loggen.CarLogMain 20210220 3 &
+
+ps -ef | grep CarLogMain # 여기서 PID 확인
+kill -9 "위에서 확인한 PID"
+
+# 로그 파일 복사
+
+cp SmartCar/* car-batch-log/
+
+# 파일 처리 확인
+
+ls car-batch-log/ # 여기서 .COMPLETED 파일 확인
+
+# hdfs 확인
+hdfs dfs -ls /tmp/pilot # 여기서 생성된 파일 확인
+
+# flume 파일 처리 종료 후
+
+# 새 터미널 연결 후 이동
+
+# hive 시작
+
+cd ~/workspace/hive
+
+hive
+
+# 테이블 생성 (hive 터미널에서 실행)
+
+CREATE TABLE CarLog (
+SmartCarStatusInfo STRING,
+CarNum STRING,
+TireFL INT,
+TireFR INT,
+TireBL INT,
+TireBR INT,
+LightFL INT,
+LightFR INT,
+LightBL INT,
+LightBR INT,
+EngineInfo STRING,
+BreakInfo STRING,
+BatteryInfo INT
+)
+ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    LINES TERMINATED BY '\n'
+STORED AS TEXTFILE;
+
+# 테이블에 데이터 연결 (hive 터미널에서 실행)
+
+LOAD DATA INPATH '/tmp/pilot/*.log'
+OVERWRITE INTO TABLE CarLog;
+
+# 확인
+
+select * from carlog limit 10;
+
+
+
+
+
+
+
