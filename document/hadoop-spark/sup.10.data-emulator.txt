@@ -1,0 +1,55 @@
+1. 데이터 에뮬레이터 실행
+
+cd ~
+
+mkdir -p workspace/pilot/bins
+
+bigdata.smartcar.loggen-1.0.jar 파일을 위에서 만든 가상 머신 경로에 복사
+
+cd ~/workspace/pilot/bins
+
+----------
+
+java -cp bigdata.smartcar.loggen-1.0.jar com.wikibook.bigdata.smartcar.loggen.DriverLogMain 20210220 3 &
+
+종료 
+    ps -ef | grep DriverLogMain --> 여기서 pid 확인
+    kill -9 위에서확인한PID
+
+-----------
+
+java -cp bigdata.smartcar.loggen-1.0.jar com.wikibook.bigdata.smartcar.loggen.CarLogMain 20210220 3 &
+
+종료 
+    ps -ef | grep CarLogMain --> 여기서 pid 확인
+    kill -9 위에서확인한PID
+
+------------
+
+차량 상태 정보 데이터 구조
+
+SmartCarStatusInfo : 로그 발생 일시
+CarNum : 차량 번호,
+TireFL : 타이어 상태(정상 : 80 ~ 100 / 비정상 : 80 이하),
+TireFR : 타이어 상태(정상 : 80 ~ 100 / 비정상 : 80 이하),
+TireBL : 타이어 상태(정상 : 80 ~ 100 / 비정상 : 80 이하),
+TireBR : 타이어 상태(정상 : 80 ~ 100 / 비정상 : 80 이하),
+LightFL : 라이트 상태 (정상 : 1 / 비정상 : 2),
+LightFR : 라이트 상태 (정상 : 1 / 비정상 : 2),
+LightBL : 라이트 상태 (정상 : 1 / 비정상 : 2),
+LightBR : 라이트 상태 (정상 : 1 / 비정상 : 2),
+EngineInfo : 엔진 상태 (정상: A / 점검필요 : B / 고장 : C),
+BreakInfo : 브레이크 상태 (정상: A / 점검필요 : B / 고장 : C),
+BatteryInfo : 베터리 충전 상태 (1 ~ 100)
+
+운전자 상태 정보 데이터 구조
+
+Driver Status Infomation : 로그 발생 일지,
+CarNum 차량 번호,
+AccStep 가속 페달 이벤트 (0 ~ 5),
+BrkStep 브레이크 이벤트(0 ~ 3),
+WheelStep 운전대 회전이벤트 (F: 직진, L1 : 좌회전각 1 ~ 10, , L2 : 좌회전각 11 ~ 20, , L3 : 좌회전각 21 ~ 30, , R1 : 우회전각 1 ~ 10, , R2 : 우회전각 11 ~ 20, , R3 : 우회전각 21 ~ 30),
+DirLightStep 방향지시등 이벤트 (L:왼쪽, R:오른쪽, N:없음),
+Speed 주행 속도 (0 ~ 250),
+AreaNum 주행 지역 (A~F + 1~10 --> A11, B07 등)
+

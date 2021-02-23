@@ -87,7 +87,7 @@ cp $HADOOP_HOME/etc/hadoop/hadoop-env.sh ./spooldir/
 
 # flume 설정 파일 작성
 
-vi logger-to-hdfs.conf
+vi spool-to-hdfs.conf
 
 ---
 agent1.sources = source1
