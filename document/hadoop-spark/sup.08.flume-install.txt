@@ -1,0 +1,182 @@
+1. flume install
+
+cd ~/apps
+
+wget https://downloads.apache.org/flume/1.9.0/apache-flume-1.9.0-bin.tar.gz
+
+gunzip apache-flume-1.9.0-bin.tar.gz
+
+tar xvf apache-flume-1.9.0-bin.tar
+
+ln -s apache-flume-1.9.0-bin flume
+
+sudo vi /etc/profile
+
+export FLUME_HOME=/home/hadoop/apps/flume
+
+PATH=$PATH:.....:$FLUME_HOME/bin
+
+rm -f ~/apps/flume/lib/guava-11.0.2.jar ( or mv -f ~/apps/flume/lib/guava-11.0.2.jar . )
+
+cp ~/apps/flume/conf/flume-env.sh.template ~/apps/flume/conf/flume-env.sh
+vi ~/apps/flume/conf/flume-env.sh
+
+   : export JAVA_OPTS="-Xms100m -Xmx1000m -Dcom.sun.management.jmxremote"
+
+2. flume 테스트 경로 구성
+
+mkdir ~/workspace/flume
+
+cd ~/workspace/flume
+
+mkdir spooldir
+
+3. 
+# flume 설정 파일 작성
+vi spool-to-logger.conf
+
+-------
+agent1.sources = source1
+agent1.sinks = sink1
+agent1.channels = channel1
+
+agent1.sources.source1.channels = channel1
+agent1.sinks.sink1.channel = channel1
+
+agent1.sources.source1.type = spooldir
+agent1.sources.source1.spoolDir = /home/hadoop/workspace/flume/spooldir
+
+agent1.sinks.sink1.type = logger
+
+agent1.channels.channel1.type = file
+-------
+
+# flume 시작
+flume-ng agent --conf-file spool-to-logger.conf --conf $FLUME_HOME/conf --name agent1
+
+# 다른 세션 열기 (hadoop login)
+
+cd ~/workspace/flume/
+ 
+# 파일 복사
+cp $HADOOP_HOME/etc/hadoop/hadoop-env.sh ./spooldir/
+
+# 로그 확인
+tail -100 ./logs/flume.log
+
+# flume 이 실행중인 세션에서 flume 종료
+ctrl + c
+
+# flume 다시 시작 (명령행에 로그 출력 옵션 추가)
+
+flume-ng agent --conf-file spool-to-logger.conf --conf $FLUME_HOME/conf --name agent1 -Dflume.root.logger=INFO,console
+
+# 열려 있는 다른 세션으로 이동
+
+# 파일 복사
+cp $HADOOP_HOME/etc/hadoop/hadoop-env.sh ./spooldir/
+
+# flume 이 실행중인 세션으로 이동해서 화면에 출력된 로그 확인
+
+
+4.
+
+# 실행중인 flume agent 중지
+
+# jps 명령으로 hdfs와 yarn 서비스 동작 중인지 확인
+
+# flume 설정 파일 작성
+
+vi logger-to-hdfs.conf
+
+---
+agent1.sources = source1
+agent1.sinks = sink1
+agent1.channels = channel1
+
+agent1.sources.source1.channels = channel1
+agent1.sinks.sink1.channel = channel1
+
+agent1.sources.source1.type = spooldir
+agent1.sources.source1.spoolDir = /home/hadoop/workspace/flume/spooldir
+
+agent1.sinks.sink1.type = hdfs
+agent1.sinks.sink1.hdfs.path = /tmp/flume
+agent1.sinks.sink1.hdfs.filePrefix = events
+agent1.sinks.sink1.hdfs.fileSuffix = .log
+agent1.sinks.sink1.hdfs.inUsePrefix = _
+agent1.sinks.sink1.hdfs.fileType = DataStream
+
+agent1.channels.channel1.type = file
+---
+ 
+# flume 시작
+
+flume-ng agent --conf-file spool-to-hdfs.conf --conf $FLUME_HOME/conf --name agent1
+
+# 다른 세션으로 이동
+
+# 파일 복사
+cp $HADOOP_HOME/etc/hadoop/hadoop-env.sh ./spooldir/
+
+# 결과 확인
+
+hdfs dfs -ls /tmp/flume/
+
+hdfs dfs -cat /tmp/flume/*.log
+
+5.
+
+# 실행중인 flume agent 중지
+
+# 기존 로그 파일 제거
+hdfs dfs -rm  /tmp/flume/*
+
+# flume 설정 파일 작성
+
+vi spool-to-hdfs-and-logger.conf
+
+---
+agent1.sources = source1
+agent1.sinks = sink1a sink1b
+agent1.channels = channel1a channel1b
+
+agent1.sources.source1.channels = channel1a channel1b
+agent1.sources.source1.selector.type = replicating
+agent1.sources.source1.selector.optional = channel1b
+agent1.sinks.sink1a.channel = channel1a
+agent1.sinks.sink1b.channel = channel1b
+
+agent1.sources.source1.type = spooldir
+agent1.sources.source1.spoolDir = /home/hadoop/workspace/flume/spooldir
+
+agent1.sinks.sink1a.type = hdfs
+agent1.sinks.sink1a.hdfs.path = /tmp/flume
+agent1.sinks.sink1a.hdfs.filePrefix = events
+agent1.sinks.sink1a.hdfs.fileSuffix = .log
+agent1.sinks.sink1a.hdfs.fileType = DataStream
+
+agent1.sinks.sink1b.type = logger
+
+agent1.channels.channel1a.type = file
+agent1.channels.channel1b.type = memory
+---
+
+# flume 시작
+
+flume-ng agent --conf-file spool-to-hdfs-and-logger.conf --conf $FLUME_HOME/conf --name=agent1 -Dflume.root.logger=INFO,console
+
+# 다른 세션으로 이동
+
+# 기존 파일 제거 
+rm -f spooldir/*
+hdfs dfs -rm /tmp/flume/*
+
+# 파일 복사
+cp $HADOOP_HOME/etc/hadoop/hadoop-env.sh ./spooldir/
+
+# 결과 확인
+
+hdfs dfs -ls /tmp/flume/
+
+hdfs dfs -cat /tmp/flume/*.log

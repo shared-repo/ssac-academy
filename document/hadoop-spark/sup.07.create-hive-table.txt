@@ -33,18 +33,17 @@ PARTITIONED BY (delayYear INT)
 ROW FORMAT DELIMITED
     FIELDS TERMINATED BY ','
     LINES TERMINATED BY '\n'
-    STORED AS TEXTFILE
-LOCATION '/users/hadoop/airline_delay';
+STORED AS TEXTFILE;
 
 =================================
 
-LOAD DATA LOCAL INPATH '/home/hadoop/workspace/hive/data-files/2001.csv'
+LOAD DATA LOCAL INPATH '/home/hadoop/workspace/hive/data-files/2003.csv'
 OVERWRITE INTO TABLE airline_delay
-PARTITION (delayYear='2001');
+PARTITION (delayYear='2003');
 
 or
 
-LOAD DATA INPATH '/user/hadllp/data-files/2001.csv'
+LOAD DATA INPATH '/user/hadoop/data-files/2001.csv'
 OVERWRITE INTO TABLE airline_delay
 PARTITION (delayYear='2001');
 

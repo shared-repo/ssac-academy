@@ -1,0 +1,106 @@
+1. zookeeper 설치
+
+cd ~/apps
+
+wget https://downloads.apache.org/zookeeper/zookeeper-3.6.2/apache-zookeeper-3.6.2-bin.tar.gz
+
+gunzip apache-zookeeper-3.6.2-bin.tar.gz
+
+tar xvf apache-zookeeper-3.6.2-bin.tar
+
+ln -s apache-zookeeper-3.6.2-bin zookeeper
+
+sudo vi /etc/profile
+
+export ZOOKEEPER_HOME=/home/hadoop/apps/zookeeper
+
+PATH=$PATH:.....:$ZOOKEEPER_HOME/bin
+
+cd $ZOOKEEPER_HOME/conf
+
+cp zoo_sample.cfg zoo.cfg
+
+vi zoo.cfg
+
+  : dataDir=/home/hadoop/data/zookeeper
+
+zkServer.sh start
+
+zkServer.sh status
+
+zkServer.sh stop
+
+
+2. Kafka 설치
+
+login as hadoop
+
+cd ~/apps
+
+wget https://downloads.apache.org/kafka/2.7.0/kafka_2.13-2.7.0.tgz
+
+gunzip kafka_2.13-2.7.0.tgz
+
+tar -xvf kafka_2.13-2.7.0.tar
+
+rm *.tar
+
+ln -s kafka_2.13-2.7.0 kafka
+
+sudo vi /etc/profile
+
+  : export KAFKA_HOME=/home/hadoop/apps/kafka
+
+  : PATH=$PATH:...:$KAFKA_HOME/bin
+
+source /etc/profile
+
+echo $KAFKA_HOME
+
+cd $KAFKA_HOME/config
+
+ls
+
+vi server.properties
+
+  : delete.topic.enabled=true
+
+
+
+3. 실행 및 사용
+
+login as hadoop
+
+cd ~/apps
+
+zkServer.sh start
+
+kafka-server-start.sh $KAFKA_HOME/config/server.properties
+
+# Topic 만들기
+
+kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic Demo-Topic
+
+kafka-topics.sh --list --bootstrap-server localhost:9092
+
+# 메시지 보내기
+
+kafka-console-producer.sh --broker-list localhost:9092 --topic Demo-Topic
+
+프롬프트에서 메시지 입력
+
+# 6. 메시지 수신
+
+신규 터미널 열기
+
+kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic Demo-Topic --from-beginning
+
+메시지 수신 확인
+
+#. kafka-producer, kafka-consumer 종료
+
+   ctrl + c
+
+# Topic 삭제
+
+kafka-topics.sh --delete --bootstrap-server localhost:9092 --topic Demo-Topic
