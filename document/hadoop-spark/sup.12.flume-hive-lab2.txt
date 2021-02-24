@@ -1,0 +1,181 @@
+1. flume 실행 1 -  buffer 조정 + file rolling 조정
+
+# rollSize : 지정된 크기가 되면 새로운 파일에 기록
+# rollInterval : 지정된 시간 동안 이벤트가 없으면 새로운 파일에 기록 ( 0은 무시 )
+# rollCount : 지정된 갯수의 이벤트가 처리되면 새로운 파일에 기록 ( 0은 무시 )
+
+cd ~/workspace/pilot/bins
+
+vi SmartCar_Agent1.conf
+
+---
+SmartCar_Agent.sources  = SmartCarInfo_SpoolSource
+SmartCar_Agent.channels = SmartCarInfo_Channel
+SmartCar_Agent.sinks    = SmartCarInfo_HdfsSink
+
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.type = spooldir
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.spoolDir = /home/hadoop/workspace/pilot/bins/car-batch-log
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.deletePolicy = immediate
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.batchSize = 1000
+
+
+SmartCar_Agent.channels.SmartCarInfo_Channel.type = memory
+SmartCar_Agent.channels.SmartCarInfo_Channel.capacity  = 10000
+SmartCar_Agent.channels.SmartCarInfo_Channel.transactionCapacity = 10000
+
+
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.type = hdfs
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.path = /tmp/pilot
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.filePrefix = event
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.fileSuffix = .log
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.fileType = DataStream
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.writeFormat = Text
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.batchSize = 10000
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.rollInterval = 0
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.rollCount = 0
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.idleTimeout = 100
+
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.rollSize = 67108864
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.threadsPoolSize = 10
+
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.channels = SmartCarInfo_Channel
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.channel = SmartCarInfo_Channel
+
+---
+
+# flume이 모니터링 할 디렉터리 생성
+mkdir car-batch-log 
+
+flume-ng agent \
+    --conf-file SmartCar_Agent1.conf \
+    --name SmartCar_Agent \
+    --conf $FLUME_HOME/conf
+
+데이터 에뮬레이터 실행
+java -cp bigdata.smartcar.loggen-1.0.jar com.wikibook.bigdata.smartcar.loggen.CarLogMain 20210220 3 &
+
+종료 
+    ps -ef | grep CarLogMain --> 여기서 pid 확인
+    kill -9 위에서확인한PID
+
+생성된 데이터를 flume이 모니터링 하는 디렉터리로 이동
+cp SmartCar/* car-batch-log
+
+hdfs 확인
+
+2. flume 실행 2 - 인터셉터 추가 1
+
+regex_filter interceptor : 지정된 조건에 해당하는 행 제거 또는 행만 포함  ( excludeEvents 옵션에 따라 )
+
+vi 
+
+---
+SmartCar_Agent.sources  = SmartCarInfo_SpoolSource
+SmartCar_Agent.channels = SmartCarInfo_Channel
+SmartCar_Agent.sinks    = SmartCarInfo_HdfsSink
+
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.type = spooldir
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.spoolDir = /home/hadoop/workspace/pilot/bins/car-batch-log
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.deletePolicy = immediate
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.batchSize = 1000
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors = filterInterceptor
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.filterInterceptor.type = regex_filter
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.filterInterceptor.regex = ^\\d{14}
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.filterInterceptor.excludeEvents = false
+
+SmartCar_Agent.channels.SmartCarInfo_Channel.type = memory
+SmartCar_Agent.channels.SmartCarInfo_Channel.capacity  = 10000
+SmartCar_Agent.channels.SmartCarInfo_Channel.transactionCapacity  = 10000
+
+
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.type = hdfs
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.path = /tmp/pilot
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.filePrefix = event
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.fileSuffix = .log
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.fileType = DataStream
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.writeFormat = Text
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.batchSize = 10000
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.rollInterval = 0
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.rollCount = 0
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.idleTimeout = 100
+
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.rollSize = 67108864
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.threadsPoolSize = 10
+
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.channels = SmartCarInfo_Channel
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.channel = SmartCarInfo_Channel
+---
+
+생성된 데이터를 flume이 모니터링 하는 디렉터리로 이동
+cp SmartCar/* car-batch-log
+
+hdfs 확인
+
+3. flume 실행 3 - 인터셉터 추가 2
+
+static interceptor: 고정 값 등록 ( channel, sink 설정에서 사용 )
+timestamp interceptor : 시간 정보 등록 ( channel, sink 설정에서 사용 )
+
+
+vi SmartCar_Agent3.conf
+
+---
+SmartCar_Agent.sources  = SmartCarInfo_SpoolSource
+SmartCar_Agent.channels = SmartCarInfo_Channel
+SmartCar_Agent.sinks    = SmartCarInfo_HdfsSink
+
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.type = spooldir
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.spoolDir = /home/hadoop/workspace/pilot/bins/car-batch-log
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.deletePolicy = immediate
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.batchSize = 1000
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors = timeInterceptor typeInterceptor filterInterceptor
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.timeInterceptor.type = timestamp
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.timeInterceptor.preserveExisting = true
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.typeInterceptor.type = static
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.typeInterceptor.key = logType
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.typeInterceptor.value = car-batch-log
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.filterInterceptor.type = regex_filter
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.filterInterceptor.regex = ^\\d{14}
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.interceptors.filterInterceptor.excludeEvents = false
+
+SmartCar_Agent.channels.SmartCarInfo_Channel.type = memory
+SmartCar_Agent.channels.SmartCarInfo_Channel.capacity  = 10000
+SmartCar_Agent.channels.SmartCarInfo_Channel.transactionCapacity  = 10000
+
+
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.type = hdfs
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.path = /tmp/pilot/collect/%{logType}/wrk_date=%Y%m%d
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.filePrefix = %{logType}
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.fileSuffix = .log
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.fileType = DataStream
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.writeFormat = Text
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.batchSize = 10000
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.rollInterval = 0
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.rollCount = 0
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.idleTimeout = 100
+
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.rollSize = 67108864
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.hdfs.threadsPoolSize = 10
+
+
+SmartCar_Agent.sources.SmartCarInfo_SpoolSource.channels = SmartCarInfo_Channel
+SmartCar_Agent.sinks.SmartCarInfo_HdfsSink.channel = SmartCarInfo_Channel
+
+
+---
+
+생성된 데이터를 flume이 모니터링 하는 디렉터리로 이동
+cp SmartCar/* car-batch-log
+
+hdfs 확인
