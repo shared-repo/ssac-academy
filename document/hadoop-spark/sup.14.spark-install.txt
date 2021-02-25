@@ -1,0 +1,140 @@
+1. 스파크 설치 (sparkdev 계정으로 실행)
+
+   - 다운로드 및 설치
+
+     cd ~/apps
+
+     wget https://downloads.apache.org/spark/spark-2.4.7/spark-2.4.7-bin-hadoop2.7.tgz
+
+     gunzip spark-2.4.7-bin-hadoop2.7.tgz
+
+     tar xvf spark-2.4.7-bin-hadoop2.7.tar
+
+     rm -f *.tar
+
+     ln -s spark-2.4.7-bin-hadoop2.7 spark
+
+
+   - 환경 변수 설정 
+
+     sudo /etc/profile
+
+     export SPARK_HOME=/home/hadoop/apps/spark
+
+     PATH=$PATH:...:$SPARK_HOME/bin
+
+   - 스파크 설정
+
+     /home/sparkdev/apps/spark/conf/spark-env.sh
+
+     export JAVA_HOME=/usr/local/active-java
+     export HADOOP_CONF_DIR=/home/hadoop/apps/hadoop/etc/hadoop
+     export YARN_CONF_DIR=/home/hadoop/apps/hadoop/etc/hadoop
+     export PYSPARK_PYTHON=/home/hadoop/apps/miniconda3/envs/pyspark-env/bin/python
+     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/hadoop/apps/hadoop/lib/native
+
+
+   - 스파크 실행
+
+     start-master.sh
+
+     start-slaves.sh
+
+     jps (확인 -> master, worker)
+
+   - 호스트 컴퓨터의 브라우저에서 확인
+
+     http://192.168.56.111:8080
+
+
+2. Miniconda (Anaconda) 설치 (hadoop 계정으로 실행)
+
+   - 다운로드 및 설치
+
+     cd ~
+
+     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
+     chmod 755 Miniconda3-latest-Linux-x86_64.sh
+
+     ./Miniconda3-latest-Linux-x86_64.sh
+
+     설치 도중 입력 항목은 
+     - 설치 경로 입력 항목 : /home/hadoop/apps/miniconda3
+     - 나머지 입력 항목 : 메시지 내용에 따라 입력 없이 엔터 또는 yes 입력 후 엔터
+     
+
+   - 변경 사항 적용
+
+     source .bashrc
+
+   - 가상 환경 만들기
+
+     cd ~
+
+     conda info --envs (가상 환경 확인)
+
+     conda create --name pyspark-env python=3.7
+
+     conda info --envs (가상 환경 확인)
+
+   - 가상 환경에 notebook 실행 환경 설치
+
+     conda activate pyspark-env
+
+     pip install jupyter jupyterlab
+
+   - jupyter public notebook server 설정
+
+         jupyter notebook --generate-config
+
+     설정 파일 수정 
+     
+       vi ~/.jupyter/jupyter_notebook_config.py
+
+        c.NotebookApp.ip = '0.0.0.0'
+        c.NotebookApp.open_browser = False
+        c.NotebookApp.port = 8180
+
+     jupyter notebook password
+     (패스워드 입력)
+
+     jupyter lab password
+     (패스워드 입력)
+     
+
+   - jupyter notebook workspace 만들기
+
+     mkdir -p ~/workspace/pyspark/nb-workspace
+
+   - jupyter notebook 서버 실행
+
+     jupyter lab --notebook-dir=~/workspace/pyspark/nb-workspace
+
+
+   - 윈도우 호스트 컴퓨터 브라우저에서 확인
+
+     http://192.168.56.111:8180
+
+     패스워드 입력
+
+
+3. 파이썬 가상 환경에 pyspark 연결 설정
+
+   sudo /etc/profile
+   
+     export PYSPARK_DRIVER_PYTHON=jupyter
+     export PYSPARK_DRIVER_PYTHON_OPTS='lab --notebook-dir=/home/hadoop/workspace/pyspark/nb-workspace'
+
+
+4. pyspark 시작
+
+   pyspark --master spark://server-pd:7077
+
+
+   - 브라우저에서 접속 후 확인
+
+    http://192.168.56.111:8180 ( notebook )
+
+
+    http://192.168.56.111:8080 ( spark dashboard )

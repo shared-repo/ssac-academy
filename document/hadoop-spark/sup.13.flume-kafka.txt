@@ -74,6 +74,10 @@ kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 
 
 kafka-topics.sh --list --bootstrap-server localhost:9092
 
+# flume agent 실행
+
+flume-ng agent --conf $FLUME_HOME/conf --conf-file SmartCar_Agent4.conf --name SmartCar_Agent
+
 데이터 에뮬레이터 실행
 java -cp bigdata.smartcar.loggen-1.0.jar com.wikibook.bigdata.smartcar.loggen.DriverLogMain 20210220 3 &
 

@@ -1,0 +1,80 @@
+1. Zeppelin download
+
+   wget https://downloads.apache.org/zeppelin/zeppelin-0.9.0/zeppelin-0.9.0-bin-all.tgz
+
+2. Unzip
+
+   gunzip zeppelin-0.9.0-bin-all.tgz
+
+   tar xvf zeppelin-0.9.0-bin-all.tar
+
+   rm *.tar
+   
+   ln -s zeppelin-0.9.0-bin-all zeppelin
+
+3. Set environment variables -> ZEPPELIN_HOME, PATH
+
+   export ZEPPELIN_HOME=/home/hadoop/apps/zeppelin
+
+   PATH=$PATH:...:$ZEPPELIN_HOME/bin
+
+
+4. copy conf/zeppelin-site.xml.template -> conf/zeppelin-site.xml
+
+    cd ~/apps/zeppelin
+    
+    cp conf/zeppelin-site.xml.template -> conf/zeppelin-site.xml
+
+    vi conf/zeppelin-site.xml
+
+<property>
+  <name>zeppelin.server.addr</name>
+  <value>server-pd</value>
+  <description>Server binding address</description>
+</property>
+
+<property>
+  <name>zeppelin.server.port</name>
+  <value>8280</value>
+  <description>Server port.</description>
+</property>
+
+
+5. Copy conf/zeppelin-env.sh.template -> conf/zeppelin-env.sh
+
+   cd ~/apps/zeppelin
+
+   cp conf/zeppelin-env.sh.template -> conf/zeppelin-env.sh
+
+   vi conf/zeppelin-env.sh
+
+      export PYSPARK_PYTHON=/home/hadoop/anaconda3/envs/pyspark-env/bin/python
+
+6. Start zeppelin
+
+   unset PYSPARK_DRIVER_PYTHONE
+   unset PYSPARK_DRIVER_PYTHON_OPTS
+
+   zeppelin-daemon.sh start
+
+7. Open browser
+
+   http://server-pd:8280
+
+
+8. 스파크 연결
+
+   우측 상단 anonymous 클릭 -> Interpreter 선택
+
+   상단 검색 입력창에 spakr 입력
+
+   우측 상단 편집 버튼 클릭
+
+   spark.master 항목의 value를 spark://server-pd:7077로 변경
+
+   아래쪽 save 버튼 클릭
+
+
+9. Stop zeppelin
+
+    zeppelin-daemon.sh stop

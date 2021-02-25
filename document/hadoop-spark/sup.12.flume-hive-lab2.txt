@@ -54,7 +54,7 @@ flume-ng agent \
     --conf $FLUME_HOME/conf
 
 데이터 에뮬레이터 실행
-java -cp bigdata.smartcar.loggen-1.0.jar com.wikibook.bigdata.smartcar.loggen.CarLogMain 20210220 3 &
+java -cp bigdata.smartcar.loggen-1.0.jar com.wikibook.bigdata.smartcar.loggen.CarLogMain 20210224 3 &
 
 종료 
     ps -ef | grep CarLogMain --> 여기서 pid 확인
@@ -65,11 +65,13 @@ cp SmartCar/* car-batch-log
 
 hdfs 확인
 
+hdfs dfs -ls /tmp/pilot
+
 2. flume 실행 2 - 인터셉터 추가 1
 
 regex_filter interceptor : 지정된 조건에 해당하는 행 제거 또는 행만 포함  ( excludeEvents 옵션에 따라 )
 
-vi 
+vi SmartCar_Agent2.conf
 
 ---
 SmartCar_Agent.sources  = SmartCarInfo_SpoolSource

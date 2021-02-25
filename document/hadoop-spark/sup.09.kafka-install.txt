@@ -16,6 +16,8 @@ export ZOOKEEPER_HOME=/home/hadoop/apps/zookeeper
 
 PATH=$PATH:.....:$ZOOKEEPER_HOME/bin
 
+source /etc/profile
+
 cd $ZOOKEEPER_HOME/conf
 
 cp zoo_sample.cfg zoo.cfg
