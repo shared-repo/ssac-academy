@@ -14,9 +14,11 @@
 
 3. Set environment variables -> ZEPPELIN_HOME, PATH
 
-   export ZEPPELIN_HOME=/home/hadoop/apps/zeppelin
+   sudo vi /etc/profile
 
-   PATH=$PATH:...:$ZEPPELIN_HOME/bin
+     export ZEPPELIN_HOME=/home/hadoop/apps/zeppelin
+
+     PATH=$PATH:...:$ZEPPELIN_HOME/bin
 
 
 4. copy conf/zeppelin-site.xml.template -> conf/zeppelin-site.xml
@@ -48,7 +50,7 @@
 
    vi conf/zeppelin-env.sh
 
-      export PYSPARK_PYTHON=/home/hadoop/anaconda3/envs/pyspark-env/bin/python
+      export PYSPARK_PYTHON=/home/hadoop/miniconda3/envs/pyspark-env/bin/python
 
 6. Start zeppelin
 
