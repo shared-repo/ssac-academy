@@ -1,0 +1,78 @@
+1. 컬럼 리스트
+
+"commentCount", "lastActivityDate", "ownerUserId", "body", "score", "creationDate", "viewCount", "title", "tags", "answerCount", "acceptedAnswerId", "postTypeId", "id")
+
+
+2. 컬럼 정보
+
+# commentCount : 포스트에 달린 댓글 개수
+# lastActivityDate : 마지막 수정 날짜 및 시각
+# ownerUserId : 포스트를 게시한 사용자 ID
+# body : 질문 및 답변 내용
+# score : 좋아요와 싫어요의 개수로 계산한 총 점수
+# creationDate : 생성 날짜 및 시각
+# viewCount : 조회 수
+# title : 질문 제목
+# tags : 질문에 달린 태그들
+# answerCount : 답변 개수
+# acceptedAnswerId : 답변이 채택된 경우 답변자의 ID
+# postTypeId :포스트의 유형 (1: 질문, 2: 답변)
+# id : 포스트의 고유 식별자
+
+3. 데이터 리스트
+
+(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12])
+
+4. 테이블 스키마
+
+postSchema = StructType([
+    StructField("commentCount", IntegerType(), True),
+    StructField("lastActivityDate", TimestampType(), True),
+    StructField("ownerUserId", LongType(), True),
+    StructField("body", StringType(), True),
+    StructField("score", IntegerType(), True),
+    StructField("creationDate", TimestampType(), True),
+    StructField("viewCount", IntegerType(), True),
+    StructField("title", StringType(), True),
+    StructField("tags", StringType(), True),
+    StructField("answerCount", IntegerType(), True),
+    StructField("acceptedAnswerId", LongType(), True),
+    StructField("postTypeId", LongType(), True),
+    StructField("id", LongType(), False)]
+)
+
+5. 데이터 변환 함수
+ 
+from datetime import datetime
+
+def safe_cast_int(val, default=None):
+    try:
+        return int(val)
+    except (ValueError, TypeError):
+        return default
+    
+def safe_cast_timestamp(val, fmt, default=None):
+    try:
+        return datetime.strptime(val, fmt)
+    except (ValueError, TypeError):
+        return default   
+
+from pyspark.sql import Row
+def stringToRow(row):
+    r = row.split("~")
+    return (safe_cast_int(r[0]),
+            # safe_cast_timestamp(r[1], 'yyyy-MM-dd HH:mm:ss.SSS'),
+            safe_cast_timestamp(r[1], '%Y-%m-%d %H:%M:%S.%f'),
+            safe_cast_int(r[2]),
+            r[3],
+            safe_cast_int(r[4]),
+            # safe_cast_timestamp(r[5], 'yyyy-MM-dd HH:mm:ss.SSS'),
+            safe_cast_timestamp(r[5], '%Y-%m-%d %H:%M:%S.%f'),
+            safe_cast_int(r[6]),
+            r[7],
+            r[8],
+            safe_cast_int(r[9]),
+            safe_cast_int(r[10]),
+            safe_cast_int(r[11]),
+            safe_cast_int(r[12]))
+
