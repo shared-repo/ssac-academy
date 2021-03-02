@@ -25,3 +25,32 @@ adultschema = StructType([
 
 ["workclass", "education", "marital_status", "occupation", "relationship", "race", "sex", "native_country", "income"]
 
+---------------------
+
+
+
+def indexStringColumns(df, cols):
+    from pyspark.ml.feature import StringIndexer
+    #variable newdf will be updated several times
+    newdf = df
+    for c in cols:
+        si = StringIndexer(inputCol=c, outputCol=c+"-num")
+        sm = si.fit(newdf)
+        newdf = sm.transform(newdf).drop(c)
+        newdf = newdf.withColumnRenamed(c+"-num", c)
+    return newdf
+
+-----------------------------------
+
+
+
+def oneHotEncodeColumns(df, cols):
+    from pyspark.ml.feature import OneHotEncoder
+    newdf = df
+    for c in cols:
+        onehotenc = OneHotEncoder(inputCol=c, outputCol=c+"-onehot", dropLast=False)
+        newdf = onehotenc.transform(newdf).drop(c)
+        newdf = newdf.withColumnRenamed(c+"-onehot", c)
+    return newdf
+
+
