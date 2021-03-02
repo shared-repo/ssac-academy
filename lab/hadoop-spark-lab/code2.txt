@@ -1,0 +1,27 @@
+
+
+from pyspark.sql.types import *
+columns = ["age", "workclass", "fnlwgt", "education", "marital_status",
+    "occupation", "relationship", "race", "sex", "capital_gain", "capital_loss",
+    "hours_per_week", "native_country", "income"]
+adultschema = StructType([
+    StructField("age",DoubleType(),True),
+    StructField("capital_gain",DoubleType(),True),
+    StructField("capital_loss",DoubleType(),True),
+    StructField("education",StringType(),True),
+    StructField("fnlwgt",DoubleType(),True),
+    StructField("hours_per_week",DoubleType(),True),
+    StructField("income",StringType(),True),
+    StructField("marital_status",StringType(),True),
+    StructField("native_country",StringType(),True),
+    StructField("occupation",StringType(),True),
+    StructField("race",StringType(),True),
+    StructField("relationship",StringType(),True),
+    StructField("sex",StringType(),True),
+    StructField("workclass",StringType(),True)
+])
+
+-------------
+
+["workclass", "education", "marital_status", "occupation", "relationship", "race", "sex", "native_country", "income"]
+
