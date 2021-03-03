@@ -1,0 +1,97 @@
+1. HBase install
+
+wget https://downloads.apache.org/hbase/2.2.6/hbase-2.2.6-bin.tar.gz
+
+gunzip hbase-2.2.6-bin.tar.gz
+
+tar xvf hbase-2.2.6-bin.tar
+
+rm *.tar
+
+ln -s hbase-2.2.6 hbase
+
+sudo vi /etc/profile
+
+    export HBASE_HOME=/home/hadoop/apps/hbase
+
+    PATH=$PATH:...:$HBASE_HOME/bin
+
+source /etc/profile
+
+cd ~/apps/hbase
+
+vi conf/hbase-site.xml
+
+  <property>
+    <name>hbase.cluster.distributed</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hbase.unsafe.stream.capability.enforce</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://localhost:9000/hbase</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>localhost</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/home/hadoop/data/zookeeper</value>
+  </property>
+
+vi conf/hbase-env.sh
+
+  export JAVA_HOME=/usr/local/active-java
+  export HBASE_MANAGES_ZK=false
+
+# 스파크 웹 인터페이스 포트 변경
+
+vi ~/apps/spark/conf/spark-env.sh
+
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/hadoop/apps/hadoop/lib/native
+  export SPARK_MASTER_WEBUI_PORT=8181
+
+# hdfs 서버 주소 변경
+
+vi ~/apps/hadoop/etc/hadoop/core-site.xml
+
+        <property>
+                <name>fs.defaultFS</name>
+                <value>hdfs://localhost:9000</value>
+        </property>
+
+
+
+2. HBase 사용
+
+start-hbase.sh
+
+jps ( hbase 실행 확인 : HMaster, HRegionServer )
+
+
+hbase shell
+
+테이블 목록 보기
+- list
+
+테이블 만들기 
+- create 'test_table', 'cf'
+
+데이터 삽입
+- put 'test_table', 'row-key1', 'cf:a', 'value1'
+- put 'test_table', 'row-key2', 'cf:b', 'value2'
+- put 'test_table', 'row-key2', 'cf:c', 'value3'
+
+데이터 읽기
+- scan 'test_table'
+
+데이터 읽기
+- get 'test_table', 'row-key1'
+
+테이블 삭제
+- disable 'test_table'
+- drop 'test_table'

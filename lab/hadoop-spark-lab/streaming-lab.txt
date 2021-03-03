@@ -1,0 +1,130 @@
+1. spark - hbase connector library 설치
+
+   mkdir ~/apps/shc
+   
+   위에서 만든 폴더에 shc-core-1.1.3-2.4-s_2.11-shaded.jar, shc-core-1.1.3-2.4-s_2.11.jar 파일 복사
+  
+2. spark - kafka 연동 라이브러리 설치
+
+   ~/apps/spark/jars/ 폴더에 spark-streaming-kafka-0-8-assembly_2.11-2.4.7.jar 파일 복사
+
+3. hbase를 사용하는 pyspark 시작
+
+pyspark --master spark://server-pd:7077 --jars /home/hadoop/apps/shc-master/core/target/shc-core-1.1.3-2.4-s_2.11-shaded.jar,/home/hadoop/apps/shc-master/core/target/shc-core-1.1.3-2.4-s_2.11.jar
+
+4. structured streaming을 사용하는 pyspark 시작
+
+pyspark --master spark://server-pd:7077 --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.7
+
+----------------------------------------
+
+5. spark-streaming test 실행 1
+
+start-dfs.sh
+start-master.sh
+start-slaves.sh
+
+# zookeeper 서버 시작
+zkServer.sh start
+
+# kafka 서버 시작
+kafka-server-start.sh $KAFKA_HOME/config/server.properties
+
+# kafka 토픽 목록 보기
+kafka-topics.sh --list --bootstrap-server server-pd:9092
+
+# Demo-Topic이 없으면 Demo-Topic 생성
+kafka-topics.sh --create --bootstrap-server server-pd:9092 --replication-factor 1 --partitions 1 --topic Demo-Topic
+
+# kafka console producer 실행 ( Demo-Topic )
+kafka-console-producer.sh --bootstrap-server server-pd:9092 --topic Demo-Topic
+
+# kafka console consumer 실행 ( Demo-Topic)
+kafka-console-consumer.sh --bootstrap-server server-pd:9092 --topic Demo-Topic
+
+pyspark --master spark://server-pd:7077
+
+---------------------------------------------------------
+
+6. spark-streaming test 실행 2
+
+start-dfs.sh
+start-master.sh
+start-slaves.sh
+
+# zookeeper 서버 시작
+zkServer.sh start
+
+# kafka 서버 시작
+kafka-server-start.sh $KAFKA_HOME/config/server.properties
+
+# kafka 토픽 목록 보기
+kafka-topics.sh --list --bootstrap-server server-pd:9092
+
+# Demo-Topic이 없으면 Demo-Topic 생성
+kafka-topics.sh --create --bootstrap-server server-pd:9092 --replication-factor 1 --partitions 1 --topic Demo-Topic
+
+# kafka console consumer 실행 ( SmartCar-Topic)
+kafka-console-consumer.sh --bootstrap-server server-pd:9092 --topic SmartCar-Topic
+
+# flume-ng 시작
+ flume-ng agent --conf $FLUME_HOME/conf --conf-file SmartCar_Agent4.conf --name SmartCar_Agent
+
+# pyspark 시작
+pyspark --master spark://server-pd:7077
+
+# 로그 생성기 실행 (실행 시작 / 종료를 반복하면서 테스트)
+java -cp bigdata.smartcar.loggen-1.0.jar com.wikibook.bigdata.smartcar.loggen.DriverLogMain 20210301 3 
+
+
+
+
+------------------------------
+
+7. spark-streaming & hbase 사용 테스트 실행
+
+start-dfs.sh
+start-master.sh
+start-slaves.sh
+
+# zookeeper 서버 시작
+zkServer.sh start
+
+# kafka 서버 시작
+kafka-server-start.sh $KAFKA_HOME/config/server.properties
+
+# kafka 토픽 목록 보기
+kafka-topics.sh --list --bootstrap-server server-pd:9092
+
+# Demo-Topic이 없으면 Demo-Topic 생성
+kafka-topics.sh --create --bootstrap-server server-pd:9092 --replication-factor 1 --partitions 1 --topic Demo-Topic
+
+# kafka console consumer 실행 ( SmartCar-Topic)
+kafka-console-consumer.sh --bootstrap-server server-pd:9092 --topic SmartCar-Topic
+
+# flume-ng 시작
+ flume-ng agent --conf $FLUME_HOME/conf --conf-file SmartCar_Agent4.conf --name SmartCar_Agent
+
+# hbase 서버 시작
+start-hbase.sh
+
+# pyspark 시작
+pyspark --master spark://server-pd:7077 --jars /home/hadoop/apps/shc/shc-core-1.1.3-2.4-s_2.11-shaded.jar,/home/hadoop/apps/shc/shc-core-1.1.3-2.4-s_2.11.jar
+
+# 로그 생성기 실행 (실행 시작 / 종료를 반복하면서 테스트)
+java -cp bigdata.smartcar.loggen-1.0.jar com.wikibook.bigdata.smartcar.loggen.DriverLogMain 20210301 3 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
