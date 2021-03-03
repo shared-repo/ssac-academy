@@ -1,3 +1,7 @@
+["key", "date", 'car_number', 'speed_pedal', 'break_pedal', 'steer_angle', 'direct_light', 'speed', 'area_number']
+
+------------------
+
 catalog = ''.join("""{
     "table":{ "namespace": "default", "name": "DriverCarInfo" },
     "rowkey": "key",
