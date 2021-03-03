@@ -1,0 +1,59 @@
+catalog = ''.join("""{
+    "table":{ "namespace": "default", "name": "DriverCarInfo" },
+    "rowkey": "key",
+    "columns": {
+        "key": { "cf": "rowkey", "col": "key", "type": "string" },
+        "date": { "cf": "cf1", "col": "date", "type": "string" }, 
+        "car_number": { "cf": "cf1", "col": "car_number", "type": "string" }, 
+        "speed_pedal": { "cf": "cf1", "col": "speed_pedal", "type": "string" }, 
+        "break_pedal": { "cf": "cf1", "col": "break_pedal", "type": "string" }, 
+        "steer_angle": { "cf": "cf1", "col": "steer_angle", "type": "string" }, 
+        "direct_light": { "cf": "cf1", "col": "direct_light", "type": "string" }, 
+        "speed": { "cf": "cf1", "col": "speed", "type": "string" }, 
+        "area_number": { "cf": "cf1", "col": "area_number", "type": "string" }
+    }
+}""".split())
+
+----------------------------
+
+smartcar_status_info_schema = StructType([
+    StructField('reg_date', StringType(), True),
+    StructField('car_number', StringType(), True),
+    StructField('tire_fl', StringType(), True),
+    StructField('tire_fr', StringType(), True),
+    StructField('tire_bl', StringType(), True),
+    StructField('tire_br', StringType(), True),
+    StructField('light_fl', StringType(), True),
+    StructField('light_fr', StringType(), True),
+    StructField('light_bl', StringType(), True),
+    StructField('light_br', StringType(), True),
+    StructField('engine', StringType(), True),
+    StructField('break', StringType(), True),
+    StructField('battery', StringType(), True),
+    StructField('biz_date', StringType(), True)
+])
+
+-----------------------------------------
+
+smartcar_master_schema = StructType([
+    StructField("car_number", StringType(), True),
+    StructField("sex", StringType(), True),
+    StructField("age", StringType(), True),
+    StructField("marriage", StringType(), True),
+    StructField("region", StringType(), True),
+    StructField("job", StringType(), True),
+    StructField("car_capacity", StringType(), True),
+    StructField("car_year", StringType(), True),
+    StructField("car_model", StringType(), True)
+])
+
+---------------------------------------------
+
+smartcar_item_buylist_schema = StructType([
+    StructField("car_number", StringType(), True),
+    StructField("item", StringType(), True),
+    StructField("score", StringType(), True),
+    StructField("month", StringType(), True)
+])
+
+----------------------------------------------

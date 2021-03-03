@@ -61,8 +61,8 @@ kafka-server-start.sh $KAFKA_HOME/config/server.properties
 # kafka 토픽 목록 보기
 kafka-topics.sh --list --bootstrap-server server-pd:9092
 
-# Demo-Topic이 없으면 Demo-Topic 생성
-kafka-topics.sh --create --bootstrap-server server-pd:9092 --replication-factor 1 --partitions 1 --topic Demo-Topic
+# SmartCar-Topic이 없으면 SmartCar-Topic 생성
+kafka-topics.sh --create --bootstrap-server server-pd:9092 --replication-factor 1 --partitions 1 --topic SmartCar-Topic
 
 # kafka console consumer 실행 ( SmartCar-Topic)
 kafka-console-consumer.sh --bootstrap-server server-pd:9092 --topic SmartCar-Topic

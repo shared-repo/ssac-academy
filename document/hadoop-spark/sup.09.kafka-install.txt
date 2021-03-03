@@ -87,7 +87,7 @@ kafka-topics.sh --list --bootstrap-server localhost:9092
 
 # 메시지 보내기
 
-kafka-console-producer.sh --broker-list localhost:9092 --topic Demo-Topic
+kafka-console-producer.sh --bootstrap-server localhost:9092 --topic Demo-Topic
 
 프롬프트에서 메시지 입력
 
