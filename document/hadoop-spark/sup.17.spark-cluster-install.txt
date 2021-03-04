@@ -1,0 +1,127 @@
+1. install spark
+
+   cd ~/apps
+
+   wget https://downloads.apache.org/spark/spark-2.4.7/spark-2.4.7-bin-hadoop2.7.tgz
+
+   gunzip spark-2.4.7-bin-hadoop2.7.tgz
+
+   tar xvf spark-2.4.7-bin-hadoop2.7.tar
+
+   rm -r spark-2.4.7-bin-hadoop2.7.tar
+
+   ln -s spark-2.4.7-bin-hadoop2.7 spark
+
+   sudo vi /etc/profile
+
+     : export SPARK_HOME=/home/hadoop/apps/spark
+
+     : PATH=$PATH: ... :$SPARK_HOME/bin:$SPARK_HOME/sbin
+
+   source /etc/profile
+
+   cd ~/apps/spark
+
+   cp conf/spark-env.sh.template conf/spark-env.sh
+
+   vi conf/spark-env.sh
+
+export JAVA_HOME=/usr/local/active-java
+export HADOOP_HOME=/home/hadoop/apps/hadoop
+export HADOOP_CONF_DIR=/home/hadoop/apps/hadoop/etc/hadoop
+export YARN_CONF_DIR=/home/hadoop/apps/hadoop/etc/hadoop
+
+   cp conf/slaves.template conf/slaves
+
+   vi conf/slaves
+
+server-a
+server-b
+server-c
+
+   ( 아래 명령으로 확인 - 일치하지 않으면 수정 )
+   vi ~/apps/hadoop/etc/hadoop/workers
+
+server-a
+server-b
+server-c
+
+2. 복제
+
+  cd ~/apps
+
+  sudo scp /etc/profile root@server-b:/etc/
+  sudo scp /etc/profile root@server-c:/etc/
+
+  scp -r spark-2.4.7-bin-hadoop2.7 hadoop@server-b:/home/hadoop/apps/
+  scp -r spark-2.4.7-bin-hadoop2.7 hadoop@server-c:/home/hadoop/apps/
+
+  ( workers 파일을 수정한 경우에 실행 )
+  scp ~/apps/hadoop/etc/hadoop/workers hadoop@server-b:/home/hadoop/apps/hadoop/etc/hadoop/
+  scp ~/apps/hadoop/etc/hadoop/workers hadoop@server-c:/home/hadoop/apps/hadoop/etc/hadoop/  
+
+  server-b, server-c 컴퓨터에서 아래 명령으로 링크 생성 및 환경 변수 적용
+
+     cd ~/apps/
+
+     ln -s spark-2.4.7-bin-hadoop2.7 spark
+
+     source /etc/profile
+
+
+3.  spark cluster 에서 실행
+
+   server-a 에서 실행
+
+   start-dfs.sh
+
+      server-a : namenode, secondarynamenode, datanode
+      server-b : datanode
+      server-c : datanode
+
+   start-yarn.sh
+
+      server-a : resourcemanager, nodemanager
+      serve-b : nodemanager
+      server-c : nodemanager
+
+   start-master.sh
+   start-slaves.sh
+
+      server-a : master, worker
+      serve-b : worker
+      server-c : worker
+
+   브라우저에서 http://192.168.56.101:8080 웹사이트에서 확인
+
+   pyspark --master spark://server-a:7077
+
+      명령어 실행 후 브라우저에서 http://192.168.56.101:8080 웹사이트에서 확인
+
+
+4. yarn cluster에서 실행
+
+   spark cluster 종료 확인
+      - jps 명령으로 master, worker 프로세스 확인되면 -> stop-slaves.sh, stop-master.sh 실행
+
+   cd ~/apps/spark
+
+   cp conf/spark-defaults.conf.template conf/spark-defaults.conf
+
+   vi conf/spark-defaults.conf
+
+spark.eventLog.enabled true
+spark.eventLog.dir hdfs://server-a:9000/spark-logs
+spark.history.fs.logDirectory hdfs://server-a:9000/spark-logs
+spark.history.ui.port 18080
+
+   hdfs dfs -mkdir /spark-logs
+
+   start-history-server.sh
+
+   jps 명령으로 historyserver 확인
+
+   브라우저에서 http://192.168.56.101:18080 페이지 확인 
+    
+
+     
