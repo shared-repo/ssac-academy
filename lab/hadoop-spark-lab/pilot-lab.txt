@@ -105,4 +105,4 @@ collation-server = utf8mb4_unicode_ci
    
 6. pyspark 시작
 
-   pyspark --master spark://server-pd:7077 --jars /home/hadoop/apps/shc-master/core/target/shc-core-1.1.3-2.4-s_2.11-shaded.jar,/home/hadoop/apps/shc-master/core/target/shc-core-1.1.3-2.4-s_2.11.jar
+   pyspark --master spark://server-pd:7077 --jars /home/hadoop/apps/shc/shc-core-1.1.3-2.4-s_2.11-shaded.jar,/home/hadoop/apps/shc/shc-core-1.1.3-2.4-s_2.11.jar
