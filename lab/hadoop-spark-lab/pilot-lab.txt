@@ -1,0 +1,108 @@
+1. 데이터 준비 
+
+   1-1. HBASE 테이블 생성
+   
+   hbase shell
+   
+      disable 'DriverCarInfo'
+	  drop 'DriverCarInfo'
+	  create 'DriverCarInfo', 'cf1'
+	  
+	  list ( 테이블 생성 확인 )
+
+   1-2. 로그 생성기로 데이터 생성
+   
+   생성일자는 20210304
+
+   SmartCarLogMain (log generator) --> Flume (SmartCar_Agent3.conf) --> HDFS
+
+   DriverLogMain (log generator) --> Flume (SmartCar_Agent4.conf) --> Kafka --> Spark Streaming --> HBASE
+
+
+2. mariadb install
+
+   cd ~/apps
+
+   wget https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
+   
+   chmod +x mariadb_repo_setup
+   
+   sudo ./mariadb_repo_setup
+   
+   sudo yum install -y MariaDB-server
+   
+3. initialize mariadb
+
+   sudo systemctl start mariadb
+   
+   sudo systemctl status mariadb ( 확인 )
+   
+   sudo mysql_secure_installation
+   
+      : 실행 후 표시되는 질문에 답변
+	  
+   sudo systemctl stop mariadb
+   
+   sudo vi /etc/my.cnf
+   
+[client]
+default-character-set = utf8mb4
+
+[mysql]
+default-character-set = utf8mb4
+
+[mysqld]
+character-set-client-handshake = FALSE
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+
+   sudo systemctl start mariadb
+   
+   mysql -u root -p
+   
+       show variables like 'c%'
+   
+   
+4. 사용자 계정 만들기, 데이터베이스 만들기, 테이블 만들기
+
+   mysql -u root -p
+   
+	   create user hadoop@localhost identified by "Pa$$w0rd"
+	   create user hadoop@"%" identified by "Pa$$w0rd"
+	   grant all privileges on *.* to hadoop@localhost;
+	   grant all privileges on *.* to hadoop@"%";
+	   flush privileges
+	   
+	   create database pilot;
+	   
+	   use pilot;
+	   
+	   create table managed_smartcar_symptom_info (
+	   idx int primary key auto_increment,
+	   car_number varchar(10) not null,
+	   speed_p_avg_by_carnum float not null,
+	   speed_p_symptom_score varchar(10) not null,
+	   break_p_avg_by_carnum float not null,
+	   break_p_symptom_score varchar(10) not null,
+	   steer_a_count int(11) not null,
+	   steer_p_symptom_score varchar(10) not null,
+	   biz_date varchar(10) not null
+	   );   
+   
+5. jdbc driver 설치 ( spark에서 mariadb에 연동할 때 사용할 도구 - python의 pymysql과 같은 역할 )
+
+   cd ~/apps
+
+   wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.23.tar.gz
+	
+   gunzip mysql-connector-java-8.0.23.tar.gz
+   
+   tar xvf mysql-connector-java-8.0.23.tar
+   
+   mv mysql-connector-java-8.0.23 mysql-jdbc
+   
+   mv mysql-jdbc/mysql-connector-java-8.0.23.jar ~/apps/spark/jars
+   
+6. pyspark 시작
+
+   pyspark --master spark://server-pd:7077 --jars /home/hadoop/apps/shc-master/core/target/shc-core-1.1.3-2.4-s_2.11-shaded.jar,/home/hadoop/apps/shc-master/core/target/shc-core-1.1.3-2.4-s_2.11.jar
