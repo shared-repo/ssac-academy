@@ -79,17 +79,11 @@ server-c
       server-b : datanode
       server-c : datanode
 
-   start-yarn.sh
-
-      server-a : resourcemanager, nodemanager
-      serve-b : nodemanager
-      server-c : nodemanager
-
    start-master.sh
    start-slaves.sh
 
       server-a : master, worker
-      serve-b : worker
+      server-b : worker
       server-c : worker
 
    브라우저에서 http://192.168.56.101:8080 웹사이트에서 확인
@@ -116,6 +110,10 @@ spark.history.fs.logDirectory hdfs://server-a:9000/spark-logs
 spark.history.ui.port 18080
 
    hdfs dfs -mkdir /spark-logs
+   
+   start-yarn.sh
+   
+   pyspark --master yarn
 
    start-history-server.sh
 
