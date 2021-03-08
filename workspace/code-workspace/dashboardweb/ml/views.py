@@ -104,3 +104,29 @@ class DiabetesPredictView(View):
 
         # 요청에 대한 응답 전송
         return HttpResponse(json_value, content_type='application/json')
+
+
+class DemoBView(TemplateView):
+    template_name = 'ml/demo-b.html'
+
+class ContentBasedRecommendView(View):
+
+    def __init__(self):
+        
+        from .estimators.content_based_movie_recommender import ContentBasedMovieRecommender
+
+        self.estimator = ContentBasedMovieRecommender()
+
+    # def get(self, request):
+    #     pass
+
+    def post(self, request):
+
+        # 요청 데이터를 읽기 (사용자가 브라우저에서 입력하고 전송한 데이터 읽기)
+        movie_title = request.POST.get('movie_title')
+
+        recommended_movies_df = self.estimator.find_sim_movie(movie_title)
+        recommended_movies_json = recommended_movies_df.to_json(orient='records')
+        
+        # 요청에 대한 응답 전송
+        return HttpResponse(recommended_movies_json, content_type='application/json')
