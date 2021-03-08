@@ -1,10 +1,10 @@
 from django.urls import path
 
-from .views import MlHomeView, IrisPredictView, DiabetesPredictView
+from .views import DemoAView, IrisPredictView, DiabetesPredictView
 
 urlpatterns = [
 
-    path('', MlHomeView.as_view(), name='home'),
+    path('demo-a', DemoAView.as_view(), name='demo_a'),
     path('predict-species', IrisPredictView.as_view(), name="iris_predict"),
     path('predict-diabetes', DiabetesPredictView.as_view(), name='diabetes_predict'),
 

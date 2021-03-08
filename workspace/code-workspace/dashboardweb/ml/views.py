@@ -6,8 +6,8 @@ from django.http.response import HttpResponse
 
 # Create your views here.
 
-class MlHomeView(TemplateView):
-    template_name = 'ml/home.html'
+class DemoAView(TemplateView):
+    template_name = 'ml/demo-a.html'
 
 class IrisPredictView(View):
 
